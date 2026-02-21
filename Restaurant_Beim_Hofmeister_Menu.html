@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Restaurant Beim Hofmeister</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a0a;
+  color: #e0d8d0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Header ---- */
+.site-header {
+  background: #0a0a0a;
+  text-align: center;
+  padding: 14px 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: 0.22em;
+  color: #fff;
+}
+.header-tagline {
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+/* ---- Tab Bar ---- */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-top: 12px;
+  border-bottom: 2px solid #222;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #666;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.tab.active {
+  color: #c41e3a;
+  border-bottom-color: #c41e3a;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ---- Category Pill Nav ---- */
+.cat-nav {
+  background: #0a0a0a;
+  padding: 6px 8px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  display: flex;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid #1a1a1a;
+}
+.cat-nav::-webkit-scrollbar { display: none; }
+.cat-pill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #333;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #888;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cat-pill--active {
+  background: #c41e3a;
+  color: #fff;
+  border-color: #c41e3a;
+}
+
+/* ---- Instagram Grid ---- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+/* ---- Tile ---- */
+.menu-tile {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tile-image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+}
+.tile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.menu-tile:hover .tile-image img { transform: scale(1.05); }
+.menu-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  pointer-events: none;
+}
+.tile-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 8px 10px;
+  gap: 6px;
+}
+.tile-name-wrap { flex: 1; min-width: 0; }
+.tile-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.tile-chinese {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  margin-top: 1px;
+}
+.tile-price {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  align-self: flex-end;
+}
+
+/* ---- Selection Checkmark ---- */
+.tile-check {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  z-index: 3;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+.menu-tile.selected .tile-check { opacity: 1; transform: scale(1); }
+.menu-tile.selected { outline: 2px solid #22c55e; outline-offset: -2px; }
+
+/* ---- Receipt / Selection ---- */
+.receipt {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 24px 20px;
+  background: #111;
+  border: 1px dashed #333;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+.receipt-header { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed #333; margin-bottom: 12px; }
+.receipt-header h3 { font-size: 1.1rem; color: #fff; letter-spacing: 0.15em; font-weight: 700; }
+.receipt-header p { font-size: 0.65rem; color: #555; margin-top: 4px; }
+.receipt-empty { text-align: center; padding: 40px 0; color: #444; font-size: 0.8rem; }
+.receipt-items { list-style: none; }
+.receipt-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dotted #222; gap: 8px; }
+.receipt-item:last-child { border-bottom: none; }
+.receipt-item-left { flex: 1; min-width: 0; }
+.receipt-item-name { display: block; font-size: 0.75rem; color: #ccc; }
+.receipt-item-chinese { display: block; font-size: 0.6rem; color: #555; margin-top: 1px; }
+.receipt-item-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.qty-controls { display: flex; align-items: center; gap: 0; border: 1px solid #333; border-radius: 6px; overflow: hidden; }
+.qty-btn { width: 28px; height: 28px; background: #1a1a1a; border: none; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.qty-btn:active { background: #333; }
+.qty-num { width: 28px; text-align: center; font-size: 0.75rem; font-weight: 600; color: #fff; background: #111; }
+.receipt-item-price { font-size: 0.78rem; color: #ccc; white-space: nowrap; text-align: right; min-width: 55px; }
+.clear-btn { display: block; width: 100%; margin-top: 12px; padding: 10px; background: none; border: 1px solid #333; border-radius: 8px; color: #666; font-family: inherit; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; }
+.clear-btn:active { background: #1a1a1a; color: #c41e3a; border-color: #c41e3a; }
+.receipt-total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0 4px; margin-top: 8px; border-top: 2px solid #333; font-weight: 700; }
+.receipt-total-label { font-size: 0.85rem; color: #fff; }
+.receipt-total-amount { font-size: 1rem; color: #22c55e; }
+.receipt-count { text-align: center; font-size: 0.65rem; color: #555; margin-top: 8px; }
+.selection-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; background: #22c55e; color: #000; font-size: 0.6rem; font-weight: 700; margin-left: 6px; padding: 0 5px; vertical-align: middle; }
+
+/* ---- Container ---- */
+.container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px 8px 80px; }
+
+/* ---- Sections ---- */
+.menu-section { margin-bottom: 28px; }
+.section-header { text-align: center; padding: 16px 8px 8px; }
+.section-chinese { display: block; font-size: 1.1rem; color: #c41e3a; letter-spacing: 0.1em; }
+.section-title { font-weight: 600; font-size: 0.95rem; color: #ccc; letter-spacing: 0.02em; }
+
+/* ---- Allergens ---- */
+.allergen-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-size: 0.55rem; font-weight: 600; border-radius: 50%; background: rgba(255,255,255,0.07); color: #888; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+
+/* ---- Drinks ---- */
+.drink-section .drink-list { background: #141414; border-radius: 12px; overflow: hidden; }
+.drink-row { display: flex; align-items: baseline; padding: 7px 12px; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s; }
+.drink-row:last-child { border-bottom: none; }
+.drink-row:active { background: rgba(34,197,94,0.08); }
+.drink-row.selected { background: rgba(34,197,94,0.1); }
+.drink-check { opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+.drink-row.selected .drink-check { opacity: 1; }
+.drink-name { flex: 1; font-size: 0.74rem; font-weight: 500; color: #bbb; min-width: 0; }
+.drink-detail { font-size: 0.62rem; color: #555; white-space: nowrap; }
+.drink-price { font-weight: 600; font-size: 0.74rem; color: #c41e3a; white-space: nowrap; text-align: right; min-width: 70px; }
+
+/* ---- Allergen Legend ---- */
+.allergen-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; background: #141414; border-radius: 12px; padding: 14px; margin-top: 6px; }
+.legend-item { font-size: 0.65rem; color: #777; display: flex; align-items: center; gap: 5px; }
+
+/* ---- Footer ---- */
+.site-footer { text-align: center; padding: 20px 16px 40px; font-size: 0.65rem; color: #444; line-height: 1.8; }
+
+/* ---- Print ---- */
+@media print {
+  body { background: #fff; color: #222; }
+  .site-header { background: #222 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; position: static; }
+  .tile-name { color: #222; }
+  .drink-section .drink-list { background: #f5f5f5; }
+  .drink-name { color: #222; }
+  .allergen-legend { background: #f5f5f5; }
+  .legend-item { color: #555; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-brand">RESTAURANT BEIM HOFMEISTER</div>
+  <div class="header-tagline"></div>
+  <div class="tab-bar">
+    <button class="tab active" data-tab="menu">Menu</button>
+    <button class="tab" data-tab="selection">Selection <span id="sel-badge" class="selection-badge" style="display:none">0</span></button>
+  </div>
+  <div class="cat-nav">
+<button class="cat-pill cat-pill--active" data-cat="all">All</button>
+<button class="cat-pill" data-cat="suppen-und-salate">Suppen und Salate</button>
+<button class="cat-pill" data-cat="vorspeisen">Vorspeisen</button>
+<button class="cat-pill" data-cat="wiener-klassiker">Wiener Klassiker</button>
+<button class="cat-pill" data-cat="wiener-klassiker">Wiener Klassiker</button>
+<button class="cat-pill" data-cat="österreichische-klassiker">Österreichische Klassiker</button>
+<button class="cat-pill" data-cat="vom-holzkohlengrill">vom Holzkohlengrill</button>
+<button class="cat-pill" data-cat="vom-holzkohlengrill">vom Holzkohlengrill</button>
+<button class="cat-pill" data-cat="fisch">Fisch</button>
+<button class="cat-pill" data-cat="vegan-und-vegetarisch">Vegan und Vegetarisch</button>
+<button class="cat-pill" data-cat="dessert">Dessert</button>
+<button class="cat-pill" data-cat="beilagen-&amp;-saucen">Beilagen &amp; Saucen</button>
+<button class="cat-pill" data-cat="feelgood-lowcarb-beilagen-&amp;-saucen">Feelgood Lowcarb Beilagen &amp; Saucen</button>
+<button class="cat-pill" data-cat="spezial-angebot">Spezial Angebot</button>
+<button class="cat-pill" data-cat="drinks">Drinks</button>
+</div>
+</header>
+
+<div id="tab-menu" class="tab-content active">
+<div class="menu-grid">
+<div class="menu-tile" data-category-start="suppen-und-salate" data-category="suppen-und-salate" data-code="S1" data-name="Klare Rindsuppe vom Tafelspitz" data-price="5,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/S1.jpg" alt="Klare Rindsuppe vom Tafelspitz" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Klare Rindsuppe vom Tafelspitz</span>
+      <span class="tile-chinese">Clear beef broth from Tafelspitz</span>
+    </div>
+    <span class="tile-price">€5,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="suppen-und-salate" data-code="S2" data-name="Gulaschsuppe mit Gebäck" data-price="8,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/S2.jpg" alt="Gulaschsuppe mit Gebäck" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gulaschsuppe mit Gebäck</span>
+      <span class="tile-chinese">Beef goulash soup with bread</span>
+    </div>
+    <span class="tile-price">€8,9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="suppen-und-salate" data-code="S3" data-name="Gemischter Salat" data-price="5,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/S3.jpg" alt="Gemischter Salat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gemischter Salat</span>
+      <span class="tile-chinese">Mixed salad</span>
+    </div>
+    <span class="tile-price">€5,9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="vorspeisen" data-category="vorspeisen" data-code="V1" data-name="Grillkäse vom Holzkohlegrill auf Salat" data-price="7,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/V1.jpg" alt="Grillkäse vom Holzkohlegrill auf Salat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Grillkäse vom Holzkohlegrill auf Salat</span>
+      <span class="tile-chinese">Grilled cheese on mixed salad</span>
+    </div>
+    <span class="tile-price">€7,9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vorspeisen" data-code="V2" data-name="Scharf angebratene eingelegte Paprika mit Waldviertler Schafkäse und Gebäck" data-price="9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/V2.jpg" alt="Scharf angebratene eingelegte Paprika mit Waldviertler Schafkäse und Gebäck" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Scharf angebratene eingelegte Paprika mit Waldviertler Schafkäse und Gebäck</span>
+      <span class="tile-chinese">Pickled pepper seared with sheep cheese from the Waldviertel and a bread</span>
+    </div>
+    <span class="tile-price">€9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vorspeisen" data-code="V3" data-name="Heimischer Mozzarella mit Paradeiser und Basilikum" data-price="7,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/V3.jpg" alt="Heimischer Mozzarella mit Paradeiser und Basilikum" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Heimischer Mozzarella mit Paradeiser und Basilikum</span>
+      <span class="tile-chinese">Austrian Mozzarella with tomatoes and basil</span>
+    </div>
+    <span class="tile-price">€7,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="wiener-klassiker" data-category="wiener-klassiker" data-code="K1" data-name="Wiener Schnitzel Original vom Kalb" data-price="21,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/K1.jpg" alt="Wiener Schnitzel Original vom Kalb" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Wiener Schnitzel Original vom Kalb</span>
+      <span class="tile-chinese">Veal cutlet breaded Viennese Original</span>
+    </div>
+    <span class="tile-price">€21,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="wiener-klassiker" data-code="K2" data-name="Schnitzel vom Schwein" data-price="15,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/K2.jpg" alt="Schnitzel vom Schwein" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Schnitzel vom Schwein</span>
+      <span class="tile-chinese">Pork cutlet breaded Viennese style</span>
+    </div>
+    <span class="tile-price">€15,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="wiener-klassiker" data-code="K3" data-name="Halbes Backhendl Wiener Art" data-price="15,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/K3.jpg" alt="Halbes Backhendl Wiener Art" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Halbes Backhendl Wiener Art</span>
+      <span class="tile-chinese">Half chicken baked Viennese style</span>
+    </div>
+    <span class="tile-price">€15,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="wiener-klassiker" data-category="wiener-klassiker" data-code="W1" data-name="Alt Wiener Zwiebelrostbraten mit Quetschkartoffeln" data-price="21,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/W1.jpg" alt="Alt Wiener Zwiebelrostbraten mit Quetschkartoffeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Alt Wiener Zwiebelrostbraten mit Quetschkartoffeln</span>
+      <span class="tile-chinese">Old Viennese style Rib Eye with crispy fried onions, pickled gherkin &amp; roast potatoes</span>
+    </div>
+    <span class="tile-price">€21,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="wiener-klassiker" data-code="W2" data-name="Wiener Tafelspitz mit Rösti dazu Apfelkren und Spinat" data-price="22,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/W2.jpg" alt="Wiener Tafelspitz mit Rösti dazu Apfelkren und Spinat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Wiener Tafelspitz mit Rösti dazu Apfelkren und Spinat</span>
+      <span class="tile-chinese">Viennese boiled beef served with horseradish-apple-creme, spinach and hash brown potatoes</span>
+    </div>
+    <span class="tile-price">€22,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="wiener-klassiker" data-code="W3" data-name="Rindergulasch mit Petersilienkartoffeln" data-price="16,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/W3.jpg" alt="Rindergulasch mit Petersilienkartoffeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Rindergulasch mit Petersilienkartoffeln</span>
+      <span class="tile-chinese">Beef goulash with parsley potatoes</span>
+    </div>
+    <span class="tile-price">€16,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="österreichische-klassiker" data-category="österreichische-klassiker" data-code="OE1" data-name="Schweinsbraten vom Schopf mit Schwarte, Sauerkraut und Serviettenknödel" data-price="17,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/OE1.jpg" alt="Schweinsbraten vom Schopf mit Schwarte, Sauerkraut und Serviettenknödel" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Schweinsbraten vom Schopf mit Schwarte, Sauerkraut und Serviettenknödel</span>
+      <span class="tile-chinese">Roast pork-shoulder-butt with rind from the oven with pickled cabbage and sliced dumplings</span>
+    </div>
+    <span class="tile-price">€17,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="österreichische-klassiker" data-code="OE2" data-name="Kalbsrollbraten aus dem Ofen in Bratensauce mit Spätzle" data-price="23,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/OE2.jpg" alt="Kalbsrollbraten aus dem Ofen in Bratensauce mit Spätzle" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kalbsrollbraten aus dem Ofen in Bratensauce mit Spätzle</span>
+      <span class="tile-chinese">Rolled roast veal from the oven in gravy with spaetzle</span>
+    </div>
+    <span class="tile-price">€23,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="vom-holzkohlengrill" data-category="vom-holzkohlengrill" data-code="H1" data-name="Dreierlei Würstchenteller mit Pommes und Senf" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/H1.jpg" alt="Dreierlei Würstchenteller mit Pommes und Senf" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Dreierlei Würstchenteller mit Pommes und Senf</span>
+      <span class="tile-chinese">Three different kinds of sausage with chips and mustard</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="vom-holzkohlengrill" data-category="vom-holzkohlengrill" data-code="HG1" data-name="Hühnerspieß auf Champignonreis" data-price="14,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/HG1.jpg" alt="Hühnerspieß auf Champignonreis" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Hühnerspieß auf Champignonreis</span>
+      <span class="tile-chinese">Chicken skewer on mushroom rice</span>
+    </div>
+    <span class="tile-price">€14,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vom-holzkohlengrill" data-code="HG2" data-name="Steak vom Beiried (250g) mit Pfeffersauce und Pommes" data-price="35" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/HG2.jpg" alt="Steak vom Beiried (250g) mit Pfeffersauce und Pommes" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Steak vom Beiried (250g) mit Pfeffersauce und Pommes</span>
+      <span class="tile-chinese">Beefsteak (250g) with pepper sauce and chips</span>
+    </div>
+    <span class="tile-price">€35</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vom-holzkohlengrill" data-code="HG3" data-name="Schweins Lungenbraten mit Pilzen und Bratkartoffeln" data-price="18" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/HG3.jpg" alt="Schweins Lungenbraten mit Pilzen und Bratkartoffeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Schweins Lungenbraten mit Pilzen und Bratkartoffeln</span>
+      <span class="tile-chinese">Pork tenderloin with mushrooms and roast potatoes</span>
+    </div>
+    <span class="tile-price">€18</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vom-holzkohlengrill" data-code="HG4" data-name="Spare Ribs vom Holzkohlengrill mit Bratkartoffeln, Knoblauch und scharfer Diavolosauce" data-price="18" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/HG4.jpg" alt="Spare Ribs vom Holzkohlengrill mit Bratkartoffeln, Knoblauch und scharfer Diavolosauce" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Spare Ribs vom Holzkohlengrill mit Bratkartoffeln, Knoblauch und scharfer Diavolosauce</span>
+      <span class="tile-chinese">Spare ribs with fried potatoes, garlic sauce and spicy diavolosauce</span>
+    </div>
+    <span class="tile-price">€18</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vom-holzkohlengrill" data-code="HG5" data-name="Grillplatte für zwei Personen (Hühner und Schweinefleisch) mit Pommes und Kräuterbutter" data-price="39" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/HG5.jpg" alt="Grillplatte für zwei Personen (Hühner und Schweinefleisch) mit Pommes und Kräuterbutter" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Grillplatte für zwei Personen (Hühner und Schweinefleisch) mit Pommes und Kräuterbutter</span>
+      <span class="tile-chinese">mixed grill plate for two with chips (chicken and pork meat)</span>
+    </div>
+    <span class="tile-price">€39</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="fisch" data-category="fisch" data-code="F1" data-name="Zanderfilet mit gegrilltem Gemüse und Quetschkartoffeln" data-price="18,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/F1.jpg" alt="Zanderfilet mit gegrilltem Gemüse und Quetschkartoffeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Zanderfilet mit gegrilltem Gemüse und Quetschkartoffeln</span>
+      <span class="tile-chinese">Pike Perch with grilled vegetables and small roastet potatoes</span>
+    </div>
+    <span class="tile-price">€18,9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="vegan-und-vegetarisch" data-category="vegan-und-vegetarisch" data-code="X1" data-name="Vegane Beyone Meat Würstchen vom Holzkohlengrill mit Pommes und Zwiebelsenf" data-price="16,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/X1.jpg" alt="Vegane Beyone Meat Würstchen vom Holzkohlengrill mit Pommes und Zwiebelsenf" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Vegane Beyone Meat Würstchen vom Holzkohlengrill mit Pommes und Zwiebelsenf</span>
+      <span class="tile-chinese">Vegan Beyond Meat sausages with chips and onion mustard sauce</span>
+    </div>
+    <span class="tile-price">€16,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="vegan-und-vegetarisch" data-code="X2" data-name="Gebackener Schärdinger Edel Gouda mit Preiselbeeren und gemischtem Salat" data-price="13,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/X2.jpg" alt="Gebackener Schärdinger Edel Gouda mit Preiselbeeren und gemischtem Salat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gebackener Schärdinger Edel Gouda mit Preiselbeeren und gemischtem Salat</span>
+      <span class="tile-chinese">backed Schärdinger gouda cheese with cranberries and mixed salad</span>
+    </div>
+    <span class="tile-price">€13,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="dessert" data-category="dessert" data-code="D1" data-name="Sacher Torte mit Schlagobers" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/D1.jpg" alt="Sacher Torte mit Schlagobers" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sacher Torte mit Schlagobers</span>
+      <span class="tile-chinese">Sacher Torte with whipped cream</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dessert" data-code="D2" data-name="Eismarillenknödel" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/D2.jpg" alt="Eismarillenknödel" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Eismarillenknödel</span>
+      <span class="tile-chinese">Ice Cream Dumpling filed with apricot jam</span>
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dessert" data-code="D3" data-name="Kaiserschmarrn hausgemacht mit Zwetschgenröster" data-price="11,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/D3.jpg" alt="Kaiserschmarrn hausgemacht mit Zwetschgenröster" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kaiserschmarrn hausgemacht mit Zwetschgenröster</span>
+      <span class="tile-chinese">sugared pancake with raisins and plumb roaster</span>
+    </div>
+    <span class="tile-price">€11,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dessert" data-code="D4" data-name="Zwei hausgemachte Marillenpalatschinken" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/D4.jpg" alt="Zwei hausgemachte Marillenpalatschinken" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Zwei hausgemachte Marillenpalatschinken</span>
+      <span class="tile-chinese">Two Pancakes whit apricot jam</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dessert" data-code="D5" data-name="Hausgemachter Alt- Wiener Apfelstrudel" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/D5.jpg" alt="Hausgemachter Alt- Wiener Apfelstrudel" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Hausgemachter Alt- Wiener Apfelstrudel</span>
+      <span class="tile-chinese">Homemade Old Viennese Apple Strudel</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="beilagen-&amp;-saucen" data-category="beilagen-&amp;-saucen" data-code="A1" data-name="Hausgemachter Erdäpfelsalat mit Kürbiskernöl" data-price="6,2" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A1.jpg" alt="Hausgemachter Erdäpfelsalat mit Kürbiskernöl" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Hausgemachter Erdäpfelsalat mit Kürbiskernöl</span>
+      <span class="tile-chinese">Homemade potato salad with pumpkin seed oil</span>
+    </div>
+    <span class="tile-price">€6,2</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A2" data-name="Rösti oder Kroketten" data-price="5,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A2.jpg" alt="Rösti oder Kroketten" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Rösti oder Kroketten</span>
+      <span class="tile-chinese">Hash browns or croquettes</span>
+    </div>
+    <span class="tile-price">€5,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A3" data-name="Pommes, Braterdäpfel oder Petersilienedäpfel" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A3.jpg" alt="Pommes, Braterdäpfel oder Petersilienedäpfel" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pommes, Braterdäpfel oder Petersilienedäpfel</span>
+      <span class="tile-chinese">French fries, roasted potatoes parsley potatoes</span>
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A4" data-name="Spätzle oder Champignonreis" data-price="4,70" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A4.jpg" alt="Spätzle oder Champignonreis" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Spätzle oder Champignonreis</span>
+      <span class="tile-chinese">Spaetzle or mushroom rice</span>
+    </div>
+    <span class="tile-price">€4,70</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A5" data-name="Zwei Scheiben Serviettenknödel" data-price="4" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A5.jpg" alt="Zwei Scheiben Serviettenknödel" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Zwei Scheiben Serviettenknödel</span>
+      <span class="tile-chinese">Two slices serviette dumplings</span>
+    </div>
+    <span class="tile-price">€4</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A6" data-name="Gebäck" data-price="1,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A6.jpg" alt="Gebäck" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gebäck</span>
+      <span class="tile-chinese">Bread</span>
+    </div>
+    <span class="tile-price">€1,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A7" data-name="Pfeffersauce" data-price="2,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A7.jpg" alt="Pfeffersauce" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pfeffersauce</span>
+      <span class="tile-chinese">Peppersauce</span>
+    </div>
+    <span class="tile-price">€2,9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A8" data-name="Bratensauce" data-price="3" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A8.jpg" alt="Bratensauce" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Bratensauce</span>
+      <span class="tile-chinese">Gravy</span>
+    </div>
+    <span class="tile-price">€3</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A9" data-name="Preiselbeeren" data-price="1" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A9.jpg" alt="Preiselbeeren" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Preiselbeeren</span>
+      <span class="tile-chinese">Cranberries</span>
+    </div>
+    <span class="tile-price">€1</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilagen-&amp;-saucen" data-code="A10" data-name="Ketschup" data-price="" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/A10.jpg" alt="Ketschup" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ketschup</span>
+      
+    </div>
+    <span class="tile-price">€</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="feelgood-lowcarb-beilagen-&amp;-saucen" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B1" data-name="Kohlrabiwedges" data-price="6,2" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B1.jpg" alt="Kohlrabiwedges" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kohlrabiwedges</span>
+      <span class="tile-chinese">Cabbage wedges</span>
+    </div>
+    <span class="tile-price">€6,2</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B2" data-name="Gemüse vom Holzkohlegrill" data-price="5,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B2.jpg" alt="Gemüse vom Holzkohlegrill" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gemüse vom Holzkohlegrill</span>
+      <span class="tile-chinese">Grilled vegetables</span>
+    </div>
+    <span class="tile-price">€5,9</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B3" data-name="Sauerkraut" data-price="4,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B3.jpg" alt="Sauerkraut" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sauerkraut</span>
+      <span class="tile-chinese">Pickled cabbage</span>
+    </div>
+    <span class="tile-price">€4,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B4" data-name="Gebratenes Pilzgemüse" data-price="5,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B4.jpg" alt="Gebratenes Pilzgemüse" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gebratenes Pilzgemüse</span>
+      <span class="tile-chinese">Fried mushrooms with vegetables</span>
+    </div>
+    <span class="tile-price">€5,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B5" data-name="Diavolo sauce" data-price="2,0" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B5.jpg" alt="Diavolo sauce" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Diavolo sauce</span>
+      
+    </div>
+    <span class="tile-price">€2,0</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B6" data-name="Knoblauchsauce" data-price="1,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B6.jpg" alt="Knoblauchsauce" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Knoblauchsauce</span>
+      <span class="tile-chinese">Garlic sauce</span>
+    </div>
+    <span class="tile-price">€1,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B7" data-name="Mayonnaise 25%" data-price="1,0" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B7.jpg" alt="Mayonnaise 25%" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mayonnaise 25%</span>
+      
+    </div>
+    <span class="tile-price">€1,0</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B8" data-name="Senf" data-price="1,0" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B8.jpg" alt="Senf" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Senf</span>
+      <span class="tile-chinese">Mustard</span>
+    </div>
+    <span class="tile-price">€1,0</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B9" data-name="Kren" data-price="2,0" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B9.jpg" alt="Kren" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kren</span>
+      <span class="tile-chinese">Horseradish</span>
+    </div>
+    <span class="tile-price">€2,0</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feelgood-lowcarb-beilagen-&amp;-saucen" data-code="B10" data-name="Ketchup" data-price="2,0" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/B10.jpg" alt="Ketchup" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ketchup</span>
+      
+    </div>
+    <span class="tile-price">€2,0</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="spezial-angebot" data-category="spezial-angebot" data-code="O1" data-name="Römerquelle Kombi" data-price="1,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/restaurant_beim_hofmeister/O1.jpg" alt="Römerquelle Kombi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Römerquelle Kombi</span>
+      
+    </div>
+    <span class="tile-price">€1,00</span>
+  </div>
+</div>
+</div>
+
+<div class="container">
+<div id="drinks-anchor"></div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">Special Offer</span>
+    <h2 class="section-title">Sonderangebot</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="C1" data-name="Coca-Cola ZERO ZUCKER" data-price="1,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca-Cola ZERO ZUCKER</span>
+      <span class="drink-price">€1,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Spezialangebot</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="GA1" data-name="Römerquelle Mineralwasser prickelnd 0,75 L" data-price="1,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Römerquelle Mineralwasser prickelnd 0,75 L</span>
+      <span class="drink-detail">Sonderangebot: Eine Flasche Römerquelle 0,75 L für nur € 1,00 beim Kauf einer Flasche Wein.</span>
+      <span class="drink-price">€1,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Aperitif</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X3" data-name="Weißerspritzer" data-price="4,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Weißerspritzer</span>
+      <span class="drink-detail">Grüner Veltliner, Soda</span>
+      <span class="drink-price">€4,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X4" data-name="Kaiserspritzer" data-price="4,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Kaiserspritzer</span>
+      <span class="drink-detail">Grüner Veltliner, Soda, Holundersirup</span>
+      <span class="drink-price">€4,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X5" data-name="Hugo" data-price="5,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Hugo</span>
+      <span class="drink-detail">Prosecco, Soda, Holundersirup, Zitronenscheibe, Eiswürfel</span>
+      <span class="drink-price">€5,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X6" data-name="Schilerol Spritz" data-price="5,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Schilerol Spritz</span>
+      <span class="drink-detail">Schilerol, Soda, Zitronenscheibe, Eiswürfel</span>
+      <span class="drink-price">€5,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X7" data-name="Aperol Spritz" data-price="6,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Aperol Spritz</span>
+      <span class="drink-detail">Aperol, Prosecco, Soda, Orangenscheibe, Eiswürfel</span>
+      <span class="drink-price">€6,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X8" data-name="Schlumberger Piccolo" data-price="8" onclick="toggleSelect(this)">
+      <span class="drink-name">Schlumberger Piccolo</span>
+      <span class="drink-price">€8</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Weißweine</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X9" data-name="Wiener Gemischter Satz DAC" data-price="6,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Wiener Gemischter Satz DAC</span>
+      <span class="drink-detail">Meyer am Pfarrplatz, 12,5%</span>
+      <span class="drink-price">€6,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X10" data-name="Grüner Veltliner Weinviertel DAC" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Grüner Veltliner Weinviertel DAC</span>
+      <span class="drink-detail">Fehlmann, 12,5%</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X11" data-name="Chardonnay" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Chardonnay</span>
+      <span class="drink-detail">Fehlmann, 13%</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="W4" data-name="Weißburgunder" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Weißburgunder</span>
+      <span class="drink-detail">Fehlmann, 13%</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="W5" data-name="Riesling" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Riesling</span>
+      <span class="drink-detail">Fehlmann, 12,5%</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Bier vom Faß</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X12" data-name="Gösser Märzen Spezial" data-price="4,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Märzen Spezial</span>
+      <span class="drink-detail">5,7%, 13,2° Stammwürze</span>
+      <span class="drink-price">€4,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X13" data-name="Wieselburger Gold" data-price="4,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Wieselburger Gold</span>
+      <span class="drink-detail">5%, 11,6° Stammwürze</span>
+      <span class="drink-price">€4,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X14" data-name="Edelweiss Hefetrüb" data-price="4,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Edelweiss Hefetrüb</span>
+      <span class="drink-detail">5,3%, 12,3° Stammwürze</span>
+      <span class="drink-price">€4,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Roséwein</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="R1" data-name="Rose Cuvée" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Rose Cuvée</span>
+      <span class="drink-detail">Zweigelt-Merlot-Blauburger, Fehlmann, 12,5%</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Rotweine</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="RT1" data-name="Wiener Trilogie Cuvée" data-price="7,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Wiener Trilogie Cuvée</span>
+      <span class="drink-detail">Zweigelt-Merlot-Cabernet Sauvignon, Wieninger, 13,5%</span>
+      <span class="drink-price">€7,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="RT2" data-name="Zweigelt" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Zweigelt</span>
+      <span class="drink-detail">Fehlmann, 14%</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="RT3" data-name="Merlot" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Merlot</span>
+      <span class="drink-detail">Fehlmann, 13%</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Flaschenbiere</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X15" data-name="Gösser helles Zwickel" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser helles Zwickel</span>
+      <span class="drink-detail">5,2% Vol, 11,8° Stammwürze</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="F2" data-name="Gösser dunkles Stiftsbräu" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser dunkles Stiftsbräu</span>
+      <span class="drink-detail">4,5% Vol, 11,8° Stammwürze</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="F3" data-name="Schwechater Wiener Lager" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Schwechater Wiener Lager</span>
+      <span class="drink-detail">5,5% Vol, 12,8° Stammwürze</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="F4" data-name="Gösser Natur Radler Zitrone" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Natur Radler Zitrone</span>
+      <span class="drink-detail">2% Vol, 4,3° Stammwürze</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="F5" data-name="Gösser Naturgold alkoholfrei" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Naturgold alkoholfrei</span>
+      <span class="drink-detail">&lt;0,5% Vol, 7° Stammwürze</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="F6" data-name="Edelweiss Weizenbier alkoholfrei" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Edelweiss Weizenbier alkoholfrei</span>
+      <span class="drink-detail">&lt;0,5% Vol, 7,6° Stammwürze</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Schnäpse vom Fass &amp; Edelbrände</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X16" data-name="Alte Zwetschke Edelbrand" data-price="6,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Alte Zwetschke Edelbrand</span>
+      <span class="drink-detail">Gölles, 40% Vol.</span>
+      <span class="drink-price">€6,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X17" data-name="Tresterbrand" data-price="5,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Tresterbrand</span>
+      <span class="drink-detail">Müller, 40% Vol.</span>
+      <span class="drink-price">€5,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X18" data-name="Quitte Edelbrand" data-price="5,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Quitte Edelbrand</span>
+      <span class="drink-detail">Hödl Hof, 40% Vol.</span>
+      <span class="drink-price">€5,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="S4" data-name="Marille" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Marille</span>
+      <span class="drink-detail">Bailoni, 40% Vol.</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="S5" data-name="Williams" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Williams</span>
+      <span class="drink-detail">Freihof 1885, 38% Vol.</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="S6" data-name="Obstler" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Obstler</span>
+      <span class="drink-detail">Freihof 1885, 38% Vol.</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="S7" data-name="Zwetschge" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Zwetschge</span>
+      <span class="drink-detail">Hauser, 38% Vol.</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="S8" data-name="Zirbe" data-price="5" onclick="toggleSelect(this)">
+      <span class="drink-name">Zirbe</span>
+      <span class="drink-detail">Winkler, 29,5% Vol.</span>
+      <span class="drink-price">€5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Alkoholfreie Getränke</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="G1" data-name="Coca Cola Original Taste" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca Cola Original Taste</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G2" data-name="Fanta" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Fanta</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G3" data-name="Mezzo Mix" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Mezzo Mix</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G4" data-name="Cappy Orange" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappy Orange</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G5" data-name="Cappy Johannis." data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappy Johannis.</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G6" data-name="KINLEY Lemon" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">KINLEY Lemon</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G7" data-name="KINLEY Bitter" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">KINLEY Bitter</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G8" data-name="Soda" data-price="3" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda</span>
+      <span class="drink-price">€3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G9" data-name="Soda Holunder" data-price="3,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda Holunder</span>
+      <span class="drink-price">€3,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G10" data-name="RÖMERQUELLE" data-price="3,7" onclick="toggleSelect(this)">
+      <span class="drink-name">RÖMERQUELLE</span>
+      <span class="drink-detail">Still oder Prickelnd</span>
+      <span class="drink-price">€3,7</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A11" data-name="Coca Cola Zero Zucker" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca Cola Zero Zucker</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A12" data-name="Sprite" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Sprite</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A13" data-name="Almdudler" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Almdudler</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A14" data-name="Cappy Marille" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappy Marille</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A15" data-name="Cappy Apfel" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappy Apfel</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A16" data-name="KINLEY Tonic" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">KINLEY Tonic</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A17" data-name="KINLEY Rose" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">KINLEY Rose</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A18" data-name="Soda Zitrone" data-price="3,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda Zitrone</span>
+      <span class="drink-price">€3,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A19" data-name="Himbeerkracherl" data-price="4" onclick="toggleSelect(this)">
+      <span class="drink-name">Himbeerkracherl</span>
+      <span class="drink-price">€4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A20" data-name="Leitungswasser Dienstleistungsbeitrag" data-price="0,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Leitungswasser Dienstleistungsbeitrag</span>
+      <span class="drink-price">€0,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Kaffee &amp; Tee</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X19" data-name="Schwarzer" data-price="3,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Schwarzer</span>
+      <span class="drink-price">€3,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X20" data-name="Brauner" data-price="3,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Brauner</span>
+      <span class="drink-price">€3,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X21" data-name="Koffeinfreier" data-price="3,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Koffeinfreier</span>
+      <span class="drink-price">€3,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="K4" data-name="Doppelter Espresso" data-price="5,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Doppelter Espresso</span>
+      <span class="drink-price">€5,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="K5" data-name="Melange" data-price="5,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Melange</span>
+      <span class="drink-price">€5,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="K6" data-name="Cappuccino" data-price="5,3" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappuccino</span>
+      <span class="drink-price">€5,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="K7" data-name="Latte macchiato" data-price="5,4" onclick="toggleSelect(this)">
+      <span class="drink-name">Latte macchiato</span>
+      <span class="drink-price">€5,4</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="K8" data-name="Tasse Tee" data-price="4,7" onclick="toggleSelect(this)">
+      <span class="drink-name">Tasse Tee</span>
+      <span class="drink-detail">Schwarz, Grün, Pfefferminz, Kamille, Früchte</span>
+      <span class="drink-price">€4,7</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div id="tab-selection" class="tab-content">
+  <div class="receipt" id="receipt">
+    <div class="receipt-header">
+      <h3>RESTAURANT BEIM HOFMEISTER</h3>
+      <p></p>
+      <p>Your Selection</p>
+    </div>
+    <div id="receipt-body">
+      <p class="receipt-empty">Tap items on the menu to add them here</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div>&copy; Restaurant Beim Hofmeister</div>
+</footer>
+
+<script>
+// ---- Tab switching ----
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    const catNav = document.querySelector('.cat-nav');
+    if (catNav) catNav.style.display = btn.dataset.tab === 'menu' ? 'flex' : 'none';
+    window.scrollTo(0, 0);
+  });
+});
+
+// ---- Category pill navigation ----
+document.querySelectorAll('.cat-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+    pill.classList.add('cat-pill--active');
+    const cat = pill.dataset.cat;
+    if (cat === 'all') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (cat === 'drinks') {
+      const anchor = document.getElementById('drinks-anchor');
+      if (anchor) {
+        const hdrH = document.querySelector('.site-header').offsetHeight;
+        const y = anchor.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      return;
+    }
+    const sentinel = document.querySelector('#tab-menu [data-category-start="' + cat + '"]');
+    if (sentinel) {
+      const hdrH = document.querySelector('.site-header').offsetHeight;
+      const y = sentinel.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+});
+
+// ---- Auto-highlight pill on scroll ----
+const catNav = document.querySelector('.cat-nav');
+if (catNav) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const cat = entry.target.getAttribute('data-category-start');
+        if (cat) {
+          document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+          const pill = document.querySelector('.cat-pill[data-cat="' + cat + '"]');
+          if (pill) {
+            pill.classList.add('cat-pill--active');
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    });
+  }, { rootMargin: '-' + catNav.offsetHeight + 'px 0px -80% 0px', threshold: 0 });
+  document.querySelectorAll('[data-category-start]').forEach(el => observer.observe(el));
+}
+
+// ---- Config ----
+const CURRENCY = '€';
+
+// ---- HTML escaping for safe innerHTML ----
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(s));
+  return d.innerHTML;
+}
+
+// ---- Selection / Receipt system ----
+const selected = new Map();
+
+function toggleSelect(el) {
+  const code = el.dataset.code;
+  const name = el.dataset.name;
+  const price = el.dataset.price;
+  const chEl = el.querySelector('.tile-chinese');
+  const chinese = chEl ? chEl.textContent : '';
+
+  if (selected.has(code)) {
+    selected.delete(code);
+    el.classList.remove('selected');
+  } else {
+    selected.set(code, { name, price, chinese, qty: 1 });
+    el.classList.add('selected');
+  }
+  updateReceipt();
+}
+
+function changeQty(code, delta) {
+  const item = selected.get(code);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) {
+    selected.delete(code);
+    document.querySelectorAll('[data-code="' + CSS.escape(code) + '"]').forEach(el => el.classList.remove('selected'));
+  }
+  updateReceipt();
+}
+
+function clearAll() {
+  selected.clear();
+  document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+  updateReceipt();
+}
+
+function parsePrice(p) {
+  const matches = p.match(/(\d+[,.]\d+)/g);
+  if (matches) return parseFloat(matches[matches.length - 1].replace(',', '.'));
+  return 0;
+}
+
+function updateReceipt() {
+  const badge = document.getElementById('sel-badge');
+  const body = document.getElementById('receipt-body');
+  let totalItems = 0;
+  selected.forEach(item => totalItems += item.qty);
+
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  if (selected.size === 0) {
+    body.innerHTML = '<p class="receipt-empty">Tap items on the menu to add them here</p>';
+    return;
+  }
+
+  let total = 0;
+  let html = '<ul class="receipt-items">';
+  selected.forEach((item, code) => {
+    const unitPrice = parsePrice(item.price);
+    const lineTotal = unitPrice * item.qty;
+    total += lineTotal;
+    const chineseSpan = item.chinese ? '<span class="receipt-item-chinese">' + escapeHtml(item.chinese) + '</span>' : '';
+    html += '<li class="receipt-item">';
+    html += '<div class="receipt-item-left">';
+    html += '<span class="receipt-item-name">' + escapeHtml(item.name) + '</span>';
+    if (chineseSpan) html += chineseSpan;
+    html += '</div>';
+    html += '<div class="receipt-item-right">';
+    html += '<div class="qty-controls">';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code.replace(/'/g,"\\'") + '\',-1)">−</button>';
+    html += '<span class="qty-num">' + item.qty + '</span>';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code.replace(/'/g,"\\'") + '\',1)">+</button>';
+    html += '</div>';
+    html += '<span class="receipt-item-price">' + CURRENCY + lineTotal.toFixed(2).replace('.', ',') + '</span>';
+    html += '</div>';
+    html += '</li>';
+  });
+  html += '</ul>';
+  html += '<div class="receipt-total">';
+  html += '<span class="receipt-total-label">TOTAL</span>';
+  html += '<span class="receipt-total-amount">' + CURRENCY + total.toFixed(2).replace('.', ',') + '</span>';
+  html += '</div>';
+  html += '<p class="receipt-count">' + totalItems + ' item' + (totalItems !== 1 ? 's' : '') + '</p>';
+  html += '<button class="clear-btn" onclick="clearAll()">Clear All</button>';
+
+  body.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
