@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Odysseus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a0a;
+  color: #e0d8d0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Header ---- */
+.site-header {
+  background: #0a0a0a;
+  text-align: center;
+  padding: 14px 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: 0.22em;
+  color: #fff;
+}
+.header-tagline {
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+/* ---- Tab Bar ---- */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-top: 12px;
+  border-bottom: 2px solid #222;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #666;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.tab.active {
+  color: #c41e3a;
+  border-bottom-color: #c41e3a;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ---- Category Pill Nav ---- */
+.cat-nav {
+  background: #0a0a0a;
+  padding: 6px 8px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  display: flex;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid #1a1a1a;
+}
+.cat-nav::-webkit-scrollbar { display: none; }
+.cat-pill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #333;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #888;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cat-pill--active {
+  background: #c41e3a;
+  color: #fff;
+  border-color: #c41e3a;
+}
+
+/* ---- Instagram Grid ---- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+/* ---- Tile ---- */
+.menu-tile {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tile-image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+}
+.tile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.menu-tile:hover .tile-image img { transform: scale(1.05); }
+.menu-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  pointer-events: none;
+}
+.tile-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 8px 10px;
+  gap: 6px;
+}
+.tile-name-wrap { flex: 1; min-width: 0; }
+.tile-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.tile-chinese {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  margin-top: 1px;
+}
+.tile-price {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  align-self: flex-end;
+}
+
+/* ---- Selection Checkmark ---- */
+.tile-check {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  z-index: 3;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+.menu-tile.selected .tile-check { opacity: 1; transform: scale(1); }
+.menu-tile.selected { outline: 2px solid #22c55e; outline-offset: -2px; }
+
+/* ---- Receipt / Selection ---- */
+.receipt {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 24px 20px;
+  background: #111;
+  border: 1px dashed #333;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+.receipt-header { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed #333; margin-bottom: 12px; }
+.receipt-header h3 { font-size: 1.1rem; color: #fff; letter-spacing: 0.15em; font-weight: 700; }
+.receipt-header p { font-size: 0.65rem; color: #555; margin-top: 4px; }
+.receipt-empty { text-align: center; padding: 40px 0; color: #444; font-size: 0.8rem; }
+.receipt-items { list-style: none; }
+.receipt-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dotted #222; gap: 8px; }
+.receipt-item:last-child { border-bottom: none; }
+.receipt-item-left { flex: 1; min-width: 0; }
+.receipt-item-name { display: block; font-size: 0.75rem; color: #ccc; }
+.receipt-item-chinese { display: block; font-size: 0.6rem; color: #555; margin-top: 1px; }
+.receipt-item-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.qty-controls { display: flex; align-items: center; gap: 0; border: 1px solid #333; border-radius: 6px; overflow: hidden; }
+.qty-btn { width: 28px; height: 28px; background: #1a1a1a; border: none; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.qty-btn:active { background: #333; }
+.qty-num { width: 28px; text-align: center; font-size: 0.75rem; font-weight: 600; color: #fff; background: #111; }
+.receipt-item-price { font-size: 0.78rem; color: #ccc; white-space: nowrap; text-align: right; min-width: 55px; }
+.clear-btn { display: block; width: 100%; margin-top: 12px; padding: 10px; background: none; border: 1px solid #333; border-radius: 8px; color: #666; font-family: inherit; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; }
+.clear-btn:active { background: #1a1a1a; color: #c41e3a; border-color: #c41e3a; }
+.receipt-total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0 4px; margin-top: 8px; border-top: 2px solid #333; font-weight: 700; }
+.receipt-total-label { font-size: 0.85rem; color: #fff; }
+.receipt-total-amount { font-size: 1rem; color: #22c55e; }
+.receipt-count { text-align: center; font-size: 0.65rem; color: #555; margin-top: 8px; }
+.selection-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; background: #22c55e; color: #000; font-size: 0.6rem; font-weight: 700; margin-left: 6px; padding: 0 5px; vertical-align: middle; }
+
+/* ---- Container ---- */
+.container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px 8px 80px; }
+
+/* ---- Sections ---- */
+.menu-section { margin-bottom: 28px; }
+.section-header { text-align: center; padding: 16px 8px 8px; }
+.section-chinese { display: block; font-size: 1.1rem; color: #c41e3a; letter-spacing: 0.1em; }
+.section-title { font-weight: 600; font-size: 0.95rem; color: #ccc; letter-spacing: 0.02em; }
+
+/* ---- Allergens ---- */
+.allergen-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-size: 0.55rem; font-weight: 600; border-radius: 50%; background: rgba(255,255,255,0.07); color: #888; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+
+/* ---- Drinks ---- */
+.drink-section .drink-list { background: #141414; border-radius: 12px; overflow: hidden; }
+.drink-row { display: flex; align-items: baseline; padding: 7px 12px; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s; }
+.drink-row:last-child { border-bottom: none; }
+.drink-row:active { background: rgba(34,197,94,0.08); }
+.drink-row.selected { background: rgba(34,197,94,0.1); }
+.drink-check { opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+.drink-row.selected .drink-check { opacity: 1; }
+.drink-name { flex: 1; font-size: 0.74rem; font-weight: 500; color: #bbb; min-width: 0; }
+.drink-detail { font-size: 0.62rem; color: #555; white-space: nowrap; }
+.drink-price { font-weight: 600; font-size: 0.74rem; color: #c41e3a; white-space: nowrap; text-align: right; min-width: 70px; }
+
+/* ---- Allergen Legend ---- */
+.allergen-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; background: #141414; border-radius: 12px; padding: 14px; margin-top: 6px; }
+.legend-item { font-size: 0.65rem; color: #777; display: flex; align-items: center; gap: 5px; }
+
+/* ---- Footer ---- */
+.site-footer { text-align: center; padding: 20px 16px 40px; font-size: 0.65rem; color: #444; line-height: 1.8; }
+
+/* ---- Print ---- */
+@media print {
+  body { background: #fff; color: #222; }
+  .site-header { background: #222 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; position: static; }
+  .tile-name { color: #222; }
+  .drink-section .drink-list { background: #f5f5f5; }
+  .drink-name { color: #222; }
+  .allergen-legend { background: #f5f5f5; }
+  .legend-item { color: #555; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-brand">ODYSSEUS</div>
+  <div class="header-tagline"></div>
+  <div class="tab-bar">
+    <button class="tab active" data-tab="menu">Menu</button>
+    <button class="tab" data-tab="selection">Selection <span id="sel-badge" class="selection-badge" style="display:none">0</span></button>
+  </div>
+  <div class="cat-nav">
+<button class="cat-pill cat-pill--active" data-cat="all">All</button>
+<button class="cat-pill" data-cat="während-du-dich-entscheidest,-grillen-wir-für-dich...">WÄHREND DU DICH ENTSCHEIDEST, GRILLEN WIR FÜR DICH...</button>
+<button class="cat-pill" data-cat="unsere-vorspeisen">Unsere Vorspeisen</button>
+<button class="cat-pill" data-cat="variationen">Variationen</button>
+<button class="cat-pill" data-cat="die-küche-empfiehlt">DIE KÜCHE EMPFIEHLT</button>
+<button class="cat-pill" data-cat="unsere-produkte">Unsere Produkte</button>
+<button class="cat-pill" data-cat="feuer-und-flamme">FEUER UND FLAMME</button>
+<button class="cat-pill" data-cat="kinderportionen">KINDERPORTIONEN</button>
+<button class="cat-pill" data-cat="flammgegart,-mit-duft-nach-strand">FLAMMGEGART, MIT DUFT NACH STRAND</button>
+<button class="cat-pill" data-cat="noch-platz?">NOCH PLATZ?</button>
+<button class="cat-pill" data-cat="drinks">Drinks</button>
+</div>
+</header>
+
+<div id="tab-menu" class="tab-content active">
+<div class="menu-grid">
+<div class="menu-tile" data-category-start="während-du-dich-entscheidest,-grillen-wir-für-dich..." data-category="während-du-dich-entscheidest,-grillen-wir-für-dich..." data-code="A1" data-name="Pita Fladenbrot mit Kräuterbutter" data-price="2,70" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/A1.jpg" alt="Pita Fladenbrot mit Kräuterbutter" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pita Fladenbrot mit Kräuterbutter</span>
+      
+    </div>
+    <span class="tile-price">€2,70</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="während-du-dich-entscheidest,-grillen-wir-für-dich..." data-code="A2" data-name="Knoblauchbrot" data-price="2,20" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/A2.jpg" alt="Knoblauchbrot" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Knoblauchbrot</span>
+      
+    </div>
+    <span class="tile-price">€2,20</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="unsere-vorspeisen" data-category="unsere-vorspeisen" data-code="V1" data-name="Rolaki" data-price="11,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V1.jpg" alt="Rolaki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Rolaki</span>
+      
+    </div>
+    <span class="tile-price">€11,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V2" data-name="Gegrillte Tentakel" data-price="15,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V2.jpg" alt="Gegrillte Tentakel" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gegrillte Tentakel</span>
+      
+    </div>
+    <span class="tile-price">€15,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V3" data-name="Saganaki" data-price="14,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V3.jpg" alt="Saganaki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Saganaki</span>
+      
+    </div>
+    <span class="tile-price">€14,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V4" data-name="Midia" data-price="10,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V4.jpg" alt="Midia" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Midia</span>
+      
+    </div>
+    <span class="tile-price">€10,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V5" data-name="Tiganita" data-price="9,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V5.jpg" alt="Tiganita" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tiganita</span>
+      
+    </div>
+    <span class="tile-price">€9,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V6" data-name="Knusprige Calamari" data-price="15,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V6.jpg" alt="Knusprige Calamari" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Knusprige Calamari</span>
+      
+    </div>
+    <span class="tile-price">€15,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V7" data-name="Kolokithokefedes" data-price="9,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V7.jpg" alt="Kolokithokefedes" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kolokithokefedes</span>
+      
+    </div>
+    <span class="tile-price">€9,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V8" data-name="Keftedakia" data-price="10,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V8.jpg" alt="Keftedakia" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Keftedakia</span>
+      
+    </div>
+    <span class="tile-price">€10,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V9" data-name="Halloumi" data-price="10,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V9.jpg" alt="Halloumi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Halloumi</span>
+      
+    </div>
+    <span class="tile-price">€10,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V10" data-name="Horiatiki – Griechischer Bauernsalat" data-price="12,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V10.jpg" alt="Horiatiki – Griechischer Bauernsalat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Horiatiki – Griechischer Bauernsalat</span>
+      
+    </div>
+    <span class="tile-price">€12,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V11" data-name="Odysseus BBQ-Salat" data-price="12,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V11.jpg" alt="Odysseus BBQ-Salat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Odysseus BBQ-Salat</span>
+      
+    </div>
+    <span class="tile-price">€12,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V12" data-name="Tomatencremesuppe" data-price="5,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V12.jpg" alt="Tomatencremesuppe" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tomatencremesuppe</span>
+      
+    </div>
+    <span class="tile-price">€5,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V13" data-name="Tagessuppe" data-price="5,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V13.jpg" alt="Tagessuppe" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tagessuppe</span>
+      
+    </div>
+    <span class="tile-price">€5,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V14" data-name="Pita mit Kräuterbutter" data-price="2,70" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V14.jpg" alt="Pita mit Kräuterbutter" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pita mit Kräuterbutter</span>
+      
+    </div>
+    <span class="tile-price">€2,70</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V15" data-name="Portion Knoblauchbrot" data-price="2,20" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V15.jpg" alt="Portion Knoblauchbrot" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Portion Knoblauchbrot</span>
+      
+    </div>
+    <span class="tile-price">€2,20</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V16" data-name="Feta &amp; Kalamata-Oliven" data-price="7,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V16.jpg" alt="Feta &amp; Kalamata-Oliven" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Feta &amp; Kalamata-Oliven</span>
+      
+    </div>
+    <span class="tile-price">€7,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V17" data-name="Gefüllte Weinblätter" data-price="5,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V17.jpg" alt="Gefüllte Weinblätter" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gefüllte Weinblätter</span>
+      
+    </div>
+    <span class="tile-price">€5,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V18" data-name="Tzatziki" data-price="5,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V18.jpg" alt="Tzatziki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tzatziki</span>
+      
+    </div>
+    <span class="tile-price">€5,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V19" data-name="Avocado-Tzatziki" data-price="6,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V19.jpg" alt="Avocado-Tzatziki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Avocado-Tzatziki</span>
+      
+    </div>
+    <span class="tile-price">€6,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V20" data-name="Skordalia" data-price="5,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V20.jpg" alt="Skordalia" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Skordalia</span>
+      
+    </div>
+    <span class="tile-price">€5,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V21" data-name="Humus" data-price="5,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V21.jpg" alt="Humus" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Humus</span>
+      
+    </div>
+    <span class="tile-price">€5,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="unsere-vorspeisen" data-code="V22" data-name="Opa Jorgos´ Tarama" data-price="6,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/V22.jpg" alt="Opa Jorgos´ Tarama" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Opa Jorgos´ Tarama</span>
+      
+    </div>
+    <span class="tile-price">€6,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="variationen" data-category="variationen" data-code="VA1" data-name="Poseidon (Meer)" data-price="19,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/VA1.jpg" alt="Poseidon (Meer)" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Poseidon (Meer)</span>
+      
+    </div>
+    <span class="tile-price">€19,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="variationen" data-code="VA2" data-name="Mesedes (warm &amp; kalt)" data-price="16,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/VA2.jpg" alt="Mesedes (warm &amp; kalt)" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mesedes (warm &amp; kalt)</span>
+      
+    </div>
+    <span class="tile-price">€16,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="variationen" data-code="VA3" data-name="Greek Dips (kalt)" data-price="14,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/VA3.jpg" alt="Greek Dips (kalt)" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Greek Dips (kalt)</span>
+      
+    </div>
+    <span class="tile-price">€14,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="die-küche-empfiehlt" data-category="die-küche-empfiehlt" data-code="M1" data-name="Juwetsi vom Lamm" data-price="20,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M1.jpg" alt="Juwetsi vom Lamm" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Juwetsi vom Lamm</span>
+      
+    </div>
+    <span class="tile-price">€20,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M2" data-name="Gyros in Metaxasauce" data-price="16,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M2.jpg" alt="Gyros in Metaxasauce" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gyros in Metaxasauce</span>
+      
+    </div>
+    <span class="tile-price">€16,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M3" data-name="Moussaka nach Oma Elenis Geheimrezept" data-price="16,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M3.jpg" alt="Moussaka nach Oma Elenis Geheimrezept" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Moussaka nach Oma Elenis Geheimrezept</span>
+      
+    </div>
+    <span class="tile-price">€16,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M4" data-name="Jiaourlou &quot;Monastiraki Style&quot;" data-price="18,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M4.jpg" alt="Jiaourlou &quot;Monastiraki Style&quot;" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Jiaourlou &quot;Monastiraki Style&quot;</span>
+      
+    </div>
+    <span class="tile-price">€18,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M5" data-name="Exochikó" data-price="21,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M5.jpg" alt="Exochikó" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Exochikó</span>
+      
+    </div>
+    <span class="tile-price">€21,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M6" data-name="Lachsfilet mit Kräuterkruste" data-price="20,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M6.jpg" alt="Lachsfilet mit Kräuterkruste" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Lachsfilet mit Kräuterkruste</span>
+      
+    </div>
+    <span class="tile-price">€20,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M7" data-name="Imam – belegte Aubergine" data-price="14,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M7.jpg" alt="Imam – belegte Aubergine" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Imam – belegte Aubergine</span>
+      
+    </div>
+    <span class="tile-price">€14,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M8" data-name="Turlu aus dem Rohr" data-price="13,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M8.jpg" alt="Turlu aus dem Rohr" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Turlu aus dem Rohr</span>
+      
+    </div>
+    <span class="tile-price">€13,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="die-küche-empfiehlt" data-code="M9" data-name="Odysseus Veggie Burger" data-price="17,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/M9.jpg" alt="Odysseus Veggie Burger" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Odysseus Veggie Burger</span>
+      
+    </div>
+    <span class="tile-price">€17,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="unsere-produkte" data-category="unsere-produkte" data-code="P1" data-name="Manaki Olivenöl" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/P1.jpg" alt="Manaki Olivenöl" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Manaki Olivenöl</span>
+      
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="feuer-und-flamme" data-category="feuer-und-flamme" data-code="G1" data-name="Odysseus Grillmix" data-price="24,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G1.jpg" alt="Odysseus Grillmix" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Odysseus Grillmix</span>
+      
+    </div>
+    <span class="tile-price">€24,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G2" data-name="Gyros" data-price="16,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G2.jpg" alt="Gyros" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gyros</span>
+      
+    </div>
+    <span class="tile-price">€16,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G3" data-name="Sirloin Steak vom Lamm" data-price="23,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G3.jpg" alt="Sirloin Steak vom Lamm" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sirloin Steak vom Lamm</span>
+      
+    </div>
+    <span class="tile-price">€23,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G4" data-name="Suvlaki Platte 1988" data-price="23,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G4.jpg" alt="Suvlaki Platte 1988" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Suvlaki Platte 1988</span>
+      
+    </div>
+    <span class="tile-price">€23,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G5" data-name="Klassische Souvlaki vom Schwein" data-price="14,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G5.jpg" alt="Klassische Souvlaki vom Schwein" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Klassische Souvlaki vom Schwein</span>
+      
+    </div>
+    <span class="tile-price">€14,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G6" data-name="Souvlaki vom Huhn" data-price="15,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G6.jpg" alt="Souvlaki vom Huhn" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Souvlaki vom Huhn</span>
+      
+    </div>
+    <span class="tile-price">€15,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G7" data-name="Souvlaki vom Lamm" data-price="20,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G7.jpg" alt="Souvlaki vom Lamm" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Souvlaki vom Lamm</span>
+      
+    </div>
+    <span class="tile-price">€20,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G8" data-name="Lammracks aus der Krone" data-price="26,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G8.jpg" alt="Lammracks aus der Krone" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Lammracks aus der Krone</span>
+      
+    </div>
+    <span class="tile-price">€26,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G9" data-name="Bifteki" data-price="14,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G9.jpg" alt="Bifteki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Bifteki</span>
+      
+    </div>
+    <span class="tile-price">€14,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G10" data-name="Bifteki Gemisto" data-price="16,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G10.jpg" alt="Bifteki Gemisto" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Bifteki Gemisto</span>
+      
+    </div>
+    <span class="tile-price">€16,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="feuer-und-flamme" data-code="G11" data-name="Big Fat Greek Odysseus Burger" data-price="18,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/G11.jpg" alt="Big Fat Greek Odysseus Burger" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Big Fat Greek Odysseus Burger</span>
+      
+    </div>
+    <span class="tile-price">€18,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="kinderportionen" data-category="kinderportionen" data-code="K1" data-name="Mikro Bifteki" data-price="9,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/K1.jpg" alt="Mikro Bifteki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mikro Bifteki</span>
+      
+    </div>
+    <span class="tile-price">€9,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kinderportionen" data-code="K2" data-name="Mikro Suvlaki" data-price="9,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/K2.jpg" alt="Mikro Suvlaki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mikro Suvlaki</span>
+      
+    </div>
+    <span class="tile-price">€9,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="flammgegart,-mit-duft-nach-strand" data-category="flammgegart,-mit-duft-nach-strand" data-code="X3" data-name="Lachsfilet" data-price="20,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X3.jpg" alt="Lachsfilet" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Lachsfilet</span>
+      
+    </div>
+    <span class="tile-price">€20,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="flammgegart,-mit-duft-nach-strand" data-code="X4" data-name="Calamari" data-price="19,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X4.jpg" alt="Calamari" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Calamari</span>
+      
+    </div>
+    <span class="tile-price">€19,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="flammgegart,-mit-duft-nach-strand" data-code="X5" data-name="Riesengarnelen" data-price="24,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X5.jpg" alt="Riesengarnelen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Riesengarnelen</span>
+      
+    </div>
+    <span class="tile-price">€24,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="flammgegart,-mit-duft-nach-strand" data-code="X6" data-name="Wolfsbarsch im Ganzen" data-price="23,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X6.jpg" alt="Wolfsbarsch im Ganzen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Wolfsbarsch im Ganzen</span>
+      
+    </div>
+    <span class="tile-price">€23,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="flammgegart,-mit-duft-nach-strand" data-code="X7" data-name="Filet von der Goldbrasse" data-price="21,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X7.jpg" alt="Filet von der Goldbrasse" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Filet von der Goldbrasse</span>
+      
+    </div>
+    <span class="tile-price">€21,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="flammgegart,-mit-duft-nach-strand" data-code="X8" data-name="Fischmarkt" data-price="59,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X8.jpg" alt="Fischmarkt" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Fischmarkt</span>
+      
+    </div>
+    <span class="tile-price">€59,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="flammgegart,-mit-duft-nach-strand" data-code="X9" data-name="Onkel Kipreos´ Fang" data-price="26,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/X9.jpg" alt="Onkel Kipreos´ Fang" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onkel Kipreos´ Fang</span>
+      
+    </div>
+    <span class="tile-price">€26,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="noch-platz?" data-category="noch-platz?" data-code="D1" data-name="Galaktobureko" data-price="7,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/D1.jpg" alt="Galaktobureko" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Galaktobureko</span>
+      
+    </div>
+    <span class="tile-price">€7,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="noch-platz?" data-code="D2" data-name="griechisches Joghurt" data-price="6,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/D2.jpg" alt="griechisches Joghurt" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">griechisches Joghurt</span>
+      
+    </div>
+    <span class="tile-price">€6,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="noch-platz?" data-code="D3" data-name="Schokosoufflé" data-price="9,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/D3.jpg" alt="Schokosoufflé" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Schokosoufflé</span>
+      
+    </div>
+    <span class="tile-price">€9,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="noch-platz?" data-code="D4" data-name="Baklava Roll" data-price="7,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/odysseus/D4.jpg" alt="Baklava Roll" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Baklava Roll</span>
+      
+    </div>
+    <span class="tile-price">€7,00</span>
+  </div>
+</div>
+</div>
+
+<div class="container">
+<div id="drinks-anchor"></div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">APÉRITIF</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X1" data-name="Odysseus Hauslimonade" data-price="4.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Odysseus Hauslimonade</span>
+      <span class="drink-price">€4.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X2" data-name="Maracuja-Limonade" data-price="4.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Maracuja-Limonade</span>
+      <span class="drink-price">€4.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A3" data-name="Lavendel-Limonade" data-price="4.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Lavendel-Limonade</span>
+      <span class="drink-price">€4.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A4" data-name="Ouzo Sunrise mit Granatapfel und Orange" data-price="4.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Ouzo Sunrise mit Granatapfel und Orange</span>
+      <span class="drink-price">€4.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A5" data-name="Hugo" data-price="5.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Hugo</span>
+      <span class="drink-price">€5.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A6" data-name="Aperol Veneziano" data-price="5.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Aperol Veneziano</span>
+      <span class="drink-price">€5.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A7" data-name="Lillet Spritz" data-price="5.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Lillet Spritz</span>
+      <span class="drink-price">€5.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A8" data-name="Campari Spritz" data-price="5.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Campari Spritz</span>
+      <span class="drink-price">€5.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A9" data-name="Prosecco" data-price="3.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Prosecco</span>
+      <span class="drink-price">€3.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A10" data-name="Ouzo Plomari" data-price="3.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Ouzo Plomari</span>
+      <span class="drink-price">€3.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A11" data-name="Martini Bianco oder Extra Dry" data-price="3.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Martini Bianco oder Extra Dry</span>
+      <span class="drink-price">€3.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A12" data-name="Campari Orange oder Soda" data-price="5.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Campari Orange oder Soda</span>
+      <span class="drink-price">€5.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">White Wine (by glass / bottle)</span>
+    <h2 class="section-title">WEISS</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="W1" data-name="Ktima White (SB.Assyrtiko)" data-price="5.9" onclick="toggleSelect(this)">
+      <span class="drink-name">Ktima White (SB.Assyrtiko)</span>
+      <span class="drink-detail">2024, Biblia Chora Estate, Kavala</span>
+      <span class="drink-price">€5.9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="W2" data-name="Mantinia Moschofilero (Muskateller)" data-price="4.7" onclick="toggleSelect(this)">
+      <span class="drink-name">Mantinia Moschofilero (Muskateller)</span>
+      <span class="drink-detail">2023, Tselepos, Mantinia, Peloponnes</span>
+      <span class="drink-price">€4.7</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="W3" data-name="Grüner Veltliner Frau Mayer" data-price="4.7" onclick="toggleSelect(this)">
+      <span class="drink-name">Grüner Veltliner Frau Mayer</span>
+      <span class="drink-detail">2023, Bio-Weingut Pollerhof, Röschitz</span>
+      <span class="drink-price">€4.7</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="W4" data-name="Wiener Gemischter Satz" data-price="4.5" onclick="toggleSelect(this)">
+      <span class="drink-name">Wiener Gemischter Satz</span>
+      <span class="drink-detail">2024, Fuhrgassl-Huber, Wien</span>
+      <span class="drink-price">€4.5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="W5" data-name="Riesling „Alsegg“" data-price="4.5" onclick="toggleSelect(this)">
+      <span class="drink-name">Riesling „Alsegg“</span>
+      <span class="drink-detail">2023, Mayer am Pfarrplatz, Wien</span>
+      <span class="drink-price">€4.5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">White Wine (by the bottle)</span>
+    <h2 class="section-title">NUR IN DER FLASCHE</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="WB1" data-name="Retsina Kechribari (Roditis.Savatiano)" data-price="13" onclick="toggleSelect(this)">
+      <span class="drink-name">Retsina Kechribari (Roditis.Savatiano)</span>
+      <span class="drink-price">€13</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="WB2" data-name="Retsina Malamatina" data-price="12" onclick="toggleSelect(this)">
+      <span class="drink-name">Retsina Malamatina</span>
+      <span class="drink-price">€12</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="WB3" data-name="Alpha Malagouzia Single Vineyard Turtles (Malagouzia)" data-price="28" onclick="toggleSelect(this)">
+      <span class="drink-name">Alpha Malagouzia Single Vineyard Turtles (Malagouzia)</span>
+      <span class="drink-detail">2023, Alpha Estate, Florina</span>
+      <span class="drink-price">€28</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">Red Wine (by glass / bottle)</span>
+    <h2 class="section-title">ROT</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="R1" data-name="MRS (Romeiko, Syrah)" data-price="4.7" onclick="toggleSelect(this)">
+      <span class="drink-name">MRS (Romeiko, Syrah)</span>
+      <span class="drink-detail">2023, Manousakis Estate, Chania, Kreta</span>
+      <span class="drink-price">€4.7</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="R2" data-name="Notios (St. Georgs-Traube)" data-price="4.5" onclick="toggleSelect(this)">
+      <span class="drink-name">Notios (St. Georgs-Traube)</span>
+      <span class="drink-detail">2023, Gaia Estate, Nemea, Peloponnes</span>
+      <span class="drink-price">€4.5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="R3" data-name="Zweigelt Selection DAC" data-price="4.3" onclick="toggleSelect(this)">
+      <span class="drink-name">Zweigelt Selection DAC</span>
+      <span class="drink-detail">2022, Weingut Salzl, Neusiedler See</span>
+      <span class="drink-price">€4.3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="R4" data-name="Churchhilll (ZW.CS.SY)" data-price="5.5" onclick="toggleSelect(this)">
+      <span class="drink-name">Churchhilll (ZW.CS.SY)</span>
+      <span class="drink-detail">2021, Bio-Weingut Pollerhof, Röschitz</span>
+      <span class="drink-price">€5.5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">Red Wine (by the bottle)</span>
+    <h2 class="section-title">NUR IN DER FLASCHE</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="RB1" data-name="Ktima Red (CS.ME.AG)" data-price="39" onclick="toggleSelect(this)">
+      <span class="drink-name">Ktima Red (CS.ME.AG)</span>
+      <span class="drink-detail">2022, Biblia Chora Estate, Kavala</span>
+      <span class="drink-price">€39</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="RB2" data-name="Nostos Alexandra&#x27;s (SY.MO.GR)" data-price="32" onclick="toggleSelect(this)">
+      <span class="drink-name">Nostos Alexandra&#x27;s (SY.MO.GR)</span>
+      <span class="drink-detail">2018, Manousakis Estate, Vatolakkos, Kreta</span>
+      <span class="drink-price">€32</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="RB3" data-name="Blaufränkisch „Hochberg“" data-price="26" onclick="toggleSelect(this)">
+      <span class="drink-name">Blaufränkisch „Hochberg“</span>
+      <span class="drink-detail">2020, Juliana Wieder, Mittelburgenland</span>
+      <span class="drink-price">€26</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="RB4" data-name="Big John Cuvée (ZW.PN.CS)" data-price="34" onclick="toggleSelect(this)">
+      <span class="drink-name">Big John Cuvée (ZW.PN.CS)</span>
+      <span class="drink-detail">2020, Weingut Johann Scheiblhofer, Andau, Neusiedlersee</span>
+      <span class="drink-price">€34</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">KAFFEE UND TEE</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="T1" data-name="griechischer Kaffee" data-price="3,90" onclick="toggleSelect(this)">
+      <span class="drink-name">griechischer Kaffee</span>
+      <span class="drink-price">€3,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T2" data-name="Espresso" data-price="2,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Espresso</span>
+      <span class="drink-price">€2,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T3" data-name="kleiner Brauner" data-price="2,90" onclick="toggleSelect(this)">
+      <span class="drink-name">kleiner Brauner</span>
+      <span class="drink-price">€2,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T4" data-name="großer Brauner" data-price="4,60" onclick="toggleSelect(this)">
+      <span class="drink-name">großer Brauner</span>
+      <span class="drink-price">€4,60</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T5" data-name="Melange" data-price="4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Melange</span>
+      <span class="drink-price">€4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T6" data-name="Cappuccino" data-price="4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappuccino</span>
+      <span class="drink-price">€4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T7" data-name="Café Latte" data-price="4,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Café Latte</span>
+      <span class="drink-price">€4,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T8" data-name="Nescafe Frappé" data-price="3,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Nescafe Frappé</span>
+      <span class="drink-price">€3,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T9" data-name="Freddo Espresso" data-price="4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Freddo Espresso</span>
+      <span class="drink-price">€4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T10" data-name="Freddo Cappuccino" data-price="4,40" onclick="toggleSelect(this)">
+      <span class="drink-name">Freddo Cappuccino</span>
+      <span class="drink-price">€4,40</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T11" data-name="griechischer Bio-Bergtee" data-price="4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">griechischer Bio-Bergtee</span>
+      <span class="drink-price">€4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="T12" data-name="Demmers Tee" data-price="4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Demmers Tee</span>
+      <span class="drink-detail">diverse Sorten</span>
+      <span class="drink-price">€4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">ALKOHOLFREI</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X10" data-name="Odysseus Hauslimonade" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Odysseus Hauslimonade</span>
+      <span class="drink-detail">mit Zitrone, Limette, Melisse und Minze</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X11" data-name="Maracuja-Limonade" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Maracuja-Limonade</span>
+      <span class="drink-detail">Maracuja. Soda. Limette. alkoholfrei</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X12" data-name="Lavendel-Limonade" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Lavendel-Limonade</span>
+      <span class="drink-detail">Lavendel. Soda. Zitrone. alkoholfrei</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X13" data-name="Mineralwasser" data-price="3,1" onclick="toggleSelect(this)">
+      <span class="drink-name">Mineralwasser</span>
+      <span class="drink-price">€3,1</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X14" data-name="Soda" data-price="2,0" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda</span>
+      <span class="drink-price">€2,0</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X15" data-name="Soda mit frisch gepresster Zitrone" data-price="3,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda mit frisch gepresster Zitrone</span>
+      <span class="drink-price">€3,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X16" data-name="Soda mit Holunder oder Himbeere" data-price="3,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda mit Holunder oder Himbeere</span>
+      <span class="drink-detail">Jugendgetränk</span>
+      <span class="drink-price">€3,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X17" data-name="Coca Cola regular oder zero" data-price="3,8" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca Cola regular oder zero</span>
+      <span class="drink-price">€3,8</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X18" data-name="Almdudler" data-price="3,8" onclick="toggleSelect(this)">
+      <span class="drink-name">Almdudler</span>
+      <span class="drink-price">€3,8</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X19" data-name="Frucade" data-price="3,8" onclick="toggleSelect(this)">
+      <span class="drink-name">Frucade</span>
+      <span class="drink-price">€3,8</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X20" data-name="Eistee Zitrone oder Pfirsich" data-price="3,8" onclick="toggleSelect(this)">
+      <span class="drink-name">Eistee Zitrone oder Pfirsich</span>
+      <span class="drink-price">€3,8</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="X21" data-name="Apfelsaft" data-price="3,1" onclick="toggleSelect(this)">
+      <span class="drink-name">Apfelsaft</span>
+      <span class="drink-price">€3,1</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A13" data-name="Apfelsaft gespritzt" data-price="2,6" onclick="toggleSelect(this)">
+      <span class="drink-name">Apfelsaft gespritzt</span>
+      <span class="drink-price">€2,6</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A14" data-name="Orangensaft" data-price="3,1" onclick="toggleSelect(this)">
+      <span class="drink-name">Orangensaft</span>
+      <span class="drink-price">€3,1</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="A15" data-name="Fruchtnektar diverse Sorten" data-price="3,2" onclick="toggleSelect(this)">
+      <span class="drink-name">Fruchtnektar diverse Sorten</span>
+      <span class="drink-price">€3,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">BIER</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="B1" data-name="Gösser Märzen vom Fass" data-price="2,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Märzen vom Fass</span>
+      <span class="drink-price">€2,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="B2" data-name="Gösser Zwickl vom Fass" data-price="3,1" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Zwickl vom Fass</span>
+      <span class="drink-price">€3,1</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="B3" data-name="Mythos Greek lager" data-price="3,6" onclick="toggleSelect(this)">
+      <span class="drink-name">Mythos Greek lager</span>
+      <span class="drink-price">€3,6</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="B4" data-name="Gösser Naturgold alkoholfrei" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Naturgold alkoholfrei</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="B5" data-name="Kaiser Doppelmalz" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Kaiser Doppelmalz</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="B6" data-name="Edelweiss Hefetrüb" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Edelweiss Hefetrüb</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="B7" data-name="Gösser NaturRadler" data-price="4,9" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser NaturRadler</span>
+      <span class="drink-price">€4,9</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">GRIECHISCHER LANDWEIN</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="GL1" data-name="Retsina geharzt weiß oder rosé" data-price="3,1" onclick="toggleSelect(this)">
+      <span class="drink-name">Retsina geharzt weiß oder rosé</span>
+      <span class="drink-price">€3,1</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="GL2" data-name="trocken weiß oder rot" data-price="3,1" onclick="toggleSelect(this)">
+      <span class="drink-name">trocken weiß oder rot</span>
+      <span class="drink-price">€3,1</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="GL3" data-name="lieblich weiß oder rot" data-price="3,3" onclick="toggleSelect(this)">
+      <span class="drink-name">lieblich weiß oder rot</span>
+      <span class="drink-price">€3,3</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="GL4" data-name="süß Samos (weiß)" data-price="3,6" onclick="toggleSelect(this)">
+      <span class="drink-name">süß Samos (weiß)</span>
+      <span class="drink-price">€3,6</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="GL5" data-name="Mavrodaphne (rot)" data-price="3,6" onclick="toggleSelect(this)">
+      <span class="drink-name">Mavrodaphne (rot)</span>
+      <span class="drink-price">€3,6</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">WEIN GESPRITZT</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="WS1" data-name="G&#x27;spritzter weiß oder rot" data-price="4,2" onclick="toggleSelect(this)">
+      <span class="drink-name">G&#x27;spritzter weiß oder rot</span>
+      <span class="drink-price">€4,2</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">DIGESTIV</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="X22" data-name="Metaxa *****" data-price="3,5" onclick="toggleSelect(this)">
+      <span class="drink-name">Metaxa *****</span>
+      <span class="drink-price">€3,5</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section"><div class="section-header"><h2 class="section-title">Allergene / Allergens</h2></div><div class="allergen-legend">
+<div class="legend-item"><span class="allergen-badge">A</span> glutenhaltiges Getreide</div>
+<div class="legend-item"><span class="allergen-badge">B</span> Krebstiere</div>
+<div class="legend-item"><span class="allergen-badge">C</span> Ei</div>
+<div class="legend-item"><span class="allergen-badge">D</span> Fisch</div>
+<div class="legend-item"><span class="allergen-badge">E</span> Erdnuss</div>
+<div class="legend-item"><span class="allergen-badge">F</span> Soja</div>
+<div class="legend-item"><span class="allergen-badge">G</span> Milch oder Laktose</div>
+<div class="legend-item"><span class="allergen-badge">H</span> Schalenfrüchte</div>
+<div class="legend-item"><span class="allergen-badge">L</span> Sellerie</div>
+<div class="legend-item"><span class="allergen-badge">M</span> Senf</div>
+<div class="legend-item"><span class="allergen-badge">N</span> Sesam</div>
+<div class="legend-item"><span class="allergen-badge">O</span> Schwefeldioxid und Sulfite</div>
+<div class="legend-item"><span class="allergen-badge">P</span> Lupinen</div>
+<div class="legend-item"><span class="allergen-badge">R</span> Weichtiere</div>
+</div></div>
+</div>
+</div>
+
+<div id="tab-selection" class="tab-content">
+  <div class="receipt" id="receipt">
+    <div class="receipt-header">
+      <h3>ODYSSEUS</h3>
+      <p></p>
+      <p>Your Selection</p>
+    </div>
+    <div id="receipt-body">
+      <p class="receipt-empty">Tap items on the menu to add them here</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div>&copy; Odysseus</div>
+</footer>
+
+<script>
+// ---- Tab switching ----
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    const catNav = document.querySelector('.cat-nav');
+    if (catNav) catNav.style.display = btn.dataset.tab === 'menu' ? 'flex' : 'none';
+    window.scrollTo(0, 0);
+  });
+});
+
+// ---- Category pill navigation ----
+document.querySelectorAll('.cat-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+    pill.classList.add('cat-pill--active');
+    const cat = pill.dataset.cat;
+    if (cat === 'all') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (cat === 'drinks') {
+      const anchor = document.getElementById('drinks-anchor');
+      if (anchor) {
+        const hdrH = document.querySelector('.site-header').offsetHeight;
+        const y = anchor.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      return;
+    }
+    const sentinel = document.querySelector('#tab-menu [data-category-start="' + cat + '"]');
+    if (sentinel) {
+      const hdrH = document.querySelector('.site-header').offsetHeight;
+      const y = sentinel.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+});
+
+// ---- Auto-highlight pill on scroll ----
+const catNav = document.querySelector('.cat-nav');
+if (catNav) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const cat = entry.target.getAttribute('data-category-start');
+        if (cat) {
+          document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+          const pill = document.querySelector('.cat-pill[data-cat="' + cat + '"]');
+          if (pill) {
+            pill.classList.add('cat-pill--active');
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    });
+  }, { rootMargin: '-' + catNav.offsetHeight + 'px 0px -80% 0px', threshold: 0 });
+  document.querySelectorAll('[data-category-start]').forEach(el => observer.observe(el));
+}
+
+// ---- Config ----
+const CURRENCY = '€';
+
+// ---- HTML escaping for safe innerHTML ----
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(s));
+  return d.innerHTML;
+}
+
+// ---- Selection / Receipt system ----
+const selected = new Map();
+
+function toggleSelect(el) {
+  const code = el.dataset.code;
+  const name = el.dataset.name;
+  const price = el.dataset.price;
+  const chEl = el.querySelector('.tile-chinese');
+  const chinese = chEl ? chEl.textContent : '';
+
+  if (selected.has(code)) {
+    selected.delete(code);
+    el.classList.remove('selected');
+  } else {
+    selected.set(code, { name, price, chinese, qty: 1 });
+    el.classList.add('selected');
+  }
+  updateReceipt();
+}
+
+function changeQty(code, delta) {
+  const item = selected.get(code);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) {
+    selected.delete(code);
+    document.querySelectorAll('[data-code="' + code + '"]').forEach(el => el.classList.remove('selected'));
+  }
+  updateReceipt();
+}
+
+function clearAll() {
+  selected.clear();
+  document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+  updateReceipt();
+}
+
+function parsePrice(p) {
+  const matches = p.match(/(\d+[,.]\d+)/g);
+  if (matches) return parseFloat(matches[matches.length - 1].replace(',', '.'));
+  return 0;
+}
+
+function updateReceipt() {
+  const badge = document.getElementById('sel-badge');
+  const body = document.getElementById('receipt-body');
+  let totalItems = 0;
+  selected.forEach(item => totalItems += item.qty);
+
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  if (selected.size === 0) {
+    body.innerHTML = '<p class="receipt-empty">Tap items on the menu to add them here</p>';
+    return;
+  }
+
+  let total = 0;
+  let html = '<ul class="receipt-items">';
+  selected.forEach((item, code) => {
+    const unitPrice = parsePrice(item.price);
+    const lineTotal = unitPrice * item.qty;
+    total += lineTotal;
+    const chineseSpan = item.chinese ? '<span class="receipt-item-chinese">' + escapeHtml(item.chinese) + '</span>' : '';
+    html += '<li class="receipt-item">';
+    html += '<div class="receipt-item-left">';
+    html += '<span class="receipt-item-name">' + escapeHtml(item.name) + '</span>';
+    if (chineseSpan) html += chineseSpan;
+    html += '</div>';
+    html += '<div class="receipt-item-right">';
+    html += '<div class="qty-controls">';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code + '\',-1)">−</button>';
+    html += '<span class="qty-num">' + item.qty + '</span>';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code + '\',1)">+</button>';
+    html += '</div>';
+    html += '<span class="receipt-item-price">' + CURRENCY + lineTotal.toFixed(2).replace('.', ',') + '</span>';
+    html += '</div>';
+    html += '</li>';
+  });
+  html += '</ul>';
+  html += '<div class="receipt-total">';
+  html += '<span class="receipt-total-label">TOTAL</span>';
+  html += '<span class="receipt-total-amount">' + CURRENCY + total.toFixed(2).replace('.', ',') + '</span>';
+  html += '</div>';
+  html += '<p class="receipt-count">' + totalItems + ' item' + (totalItems !== 1 ? 's' : '') + '</p>';
+  html += '<button class="clear-btn" onclick="clearAll()">Clear All</button>';
+
+  body.innerHTML = html;
+}
+</script>
+
+</body>
+</html>

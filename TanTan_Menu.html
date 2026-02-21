@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>TANTAN – Chinese Fine Dining · Vienna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a0a;
+  color: #e0d8d0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Header ---- */
+.site-header {
+  background: #0a0a0a;
+  text-align: center;
+  padding: 14px 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: 0.22em;
+  color: #fff;
+}
+.header-tagline {
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+/* ---- Tab Bar ---- */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-top: 12px;
+  border-bottom: 2px solid #222;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #666;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.tab.active {
+  color: #c41e3a;
+  border-bottom-color: #c41e3a;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* ---- Category Pill Nav ---- */
+.cat-nav {
+  background: #0a0a0a;
+  padding: 6px 8px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  display: flex;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid #1a1a1a;
+}
+.cat-nav::-webkit-scrollbar { display: none; }
+.cat-pill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #333;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #888;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cat-pill--active {
+  background: #c41e3a;
+  color: #fff;
+  border-color: #c41e3a;
+}
+
+/* ---- Instagram Grid ---- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+/* ---- Tile ---- */
+.menu-tile {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+}
+.tile-image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+}
+.tile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.menu-tile:hover .tile-image img {
+  transform: scale(1.05);
+}
+/* Gradient overlay at bottom for text legibility */
+.menu-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  pointer-events: none;
+}
+.tile-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 8px 10px;
+  gap: 6px;
+}
+.tile-name-wrap {
+  flex: 1;
+  min-width: 0;
+}
+.tile-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.tile-chinese {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  margin-top: 1px;
+}
+.tile-price {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  align-self: flex-end;
+}
+
+/* ---- Selection Checkmark ---- */
+.tile-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  z-index: 3;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+.menu-tile.selected .tile-check {
+  opacity: 1;
+  transform: scale(1);
+}
+.menu-tile {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.menu-tile.selected {
+  outline: 2px solid #22c55e;
+  outline-offset: -2px;
+}
+
+/* ---- Receipt / Selection Tab ---- */
+.receipt {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 24px 20px;
+  background: #111;
+  border: 1px dashed #333;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+.receipt-header {
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed #333;
+  margin-bottom: 12px;
+}
+.receipt-header h3 {
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+.receipt-header p {
+  font-size: 0.65rem;
+  color: #555;
+  margin-top: 4px;
+}
+.receipt-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: #444;
+  font-size: 0.8rem;
+}
+.receipt-items {
+  list-style: none;
+}
+.receipt-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dotted #222;
+  gap: 8px;
+}
+.receipt-item:last-child { border-bottom: none; }
+.receipt-item-left {
+  flex: 1;
+  min-width: 0;
+}
+.receipt-item-name {
+  display: block;
+  font-size: 0.75rem;
+  color: #ccc;
+}
+.receipt-item-chinese {
+  display: block;
+  font-size: 0.6rem;
+  color: #555;
+  margin-top: 1px;
+}
+.receipt-item-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #333;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.qty-btn {
+  width: 28px;
+  height: 28px;
+  background: #1a1a1a;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.qty-btn:active { background: #333; }
+.qty-num {
+  width: 28px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  background: #111;
+}
+.receipt-item-price {
+  font-size: 0.78rem;
+  color: #ccc;
+  white-space: nowrap;
+  text-align: right;
+  min-width: 55px;
+}
+.clear-btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: none;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: #666;
+  font-family: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.clear-btn:active { background: #1a1a1a; color: #c41e3a; border-color: #c41e3a; }
+.receipt-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0 4px;
+  margin-top: 8px;
+  border-top: 2px solid #333;
+  font-weight: 700;
+}
+.receipt-total-label {
+  font-size: 0.85rem;
+  color: #fff;
+}
+.receipt-total-amount {
+  font-size: 1rem;
+  color: #22c55e;
+}
+.receipt-count {
+  text-align: center;
+  font-size: 0.65rem;
+  color: #555;
+  margin-top: 8px;
+}
+.selection-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: #22c55e;
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 700;
+  margin-left: 6px;
+  padding: 0 5px;
+  vertical-align: middle;
+}
+
+/* ---- Container (for drinks/allergens below grid) ---- */
+.container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 8px 80px;
+}
+
+/* ---- Section ---- */
+.menu-section {
+  margin-bottom: 28px;
+}
+.section-header {
+  text-align: center;
+  padding: 16px 8px 8px;
+}
+.section-chinese {
+  display: block;
+  font-size: 1.1rem;
+  color: #c41e3a;
+  letter-spacing: 0.1em;
+}
+.section-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #ccc;
+  letter-spacing: 0.02em;
+}
+.section-subtitle {
+  font-weight: 400;
+  color: #666;
+  font-size: 0.8em;
+}
+.section-allergen-note {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.section-note {
+  text-align: center;
+  font-size: 0.68rem;
+  color: #666;
+  margin-bottom: 4px;
+  font-style: italic;
+}
+.note-secondary {
+  color: #a08060;
+}
+
+/* ---- Allergen badge (used in legend + drinks) ---- */
+.allergen-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 0.55rem;
+  font-weight: 600;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  color: #888;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* ---- Drinks ---- */
+.drink-section .drink-list {
+  background: #141414;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.drink-row {
+  display: flex;
+  align-items: baseline;
+  padding: 7px 12px;
+  gap: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.drink-row:last-child { border-bottom: none; }
+.drink-row { cursor: pointer; transition: background 0.15s; }
+.drink-row:active { background: rgba(34,197,94,0.08); }
+.drink-row.selected { background: rgba(34,197,94,0.1); }
+.drink-check {
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+.drink-row.selected .drink-check { opacity: 1; }
+.drink-name {
+  flex: 1;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: #bbb;
+  min-width: 0;
+}
+.drink-detail {
+  font-size: 0.62rem;
+  color: #555;
+  white-space: nowrap;
+}
+.drink-price {
+  font-weight: 600;
+  font-size: 0.74rem;
+  color: #c41e3a;
+  white-space: nowrap;
+  text-align: right;
+  min-width: 70px;
+}
+
+/* ---- Allergen Legend ---- */
+.allergen-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+  background: #141414;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 6px;
+}
+.legend-item {
+  font-size: 0.65rem;
+  color: #777;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  text-align: center;
+  padding: 20px 16px 40px;
+  font-size: 0.65rem;
+  color: #444;
+  line-height: 1.8;
+}
+
+/* ---- Print ---- */
+@media print {
+  body { background: #fff; color: #222; }
+  .site-header { background: #222 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; position: static; }
+  .tile-image img { border-radius: 8px; }
+  .tile-name { color: #222; }
+  .drink-section .drink-list { background: #f5f5f5; }
+  .drink-name { color: #222; }
+  .allergen-legend { background: #f5f5f5; }
+  .legend-item { color: #555; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-brand">TANTAN</div>
+  <div class="header-tagline">Chinese Fine Dining &middot; Vienna</div>
+  <div class="tab-bar">
+    <button class="tab active" data-tab="menu">Menu</button>
+    <button class="tab" data-tab="selection">Selection <span id="sel-badge" class="selection-badge" style="display:none">0</span></button>
+  </div>
+  <div class="cat-nav">
+<button class="cat-pill cat-pill--active" data-cat="all">All</button>
+<button class="cat-pill" data-cat="tantan-lunch">TanTan Lunch</button>
+<button class="cat-pill" data-cat="kaiweicai--starter">Starter</button>
+<button class="cat-pill" data-cat="tang--suppe">Suppe</button>
+<button class="cat-pill" data-cat="dianxin--dimsum">DimSum</button>
+<button class="cat-pill" data-cat="jiaozi--dumplings">Dumplings</button>
+<button class="cat-pill" data-cat="mian--nudeln">Nudeln</button>
+<button class="cat-pill" data-cat="zhengcai--hauptspeise">Hauptspeise</button>
+<button class="cat-pill" data-cat="beilage-/-desserts">Beilage / Desserts</button>
+<button class="cat-pill" data-cat="drinks">Drinks</button>
+</div>
+</header>
+
+<div id="tab-menu" class="tab-content active">
+<div class="menu-grid">
+<div class="menu-tile" data-category-start="tantan-lunch" data-category="tantan-lunch" data-code="M1" data-name="Crispy Chicken" data-price="10,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/M1.jpg" alt="Crispy Chicken" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Crispy Chicken</span>
+      <span class="tile-chinese">香酥鸡炒饭</span>
+    </div>
+    <span class="tile-price">€10,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tantan-lunch" data-code="M2" data-name="Onion Beef" data-price="11,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/M2.jpg" alt="Onion Beef" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onion Beef</span>
+      <span class="tile-chinese">洋葱牛肉</span>
+    </div>
+    <span class="tile-price">€11,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tantan-lunch" data-code="M3" data-name="Orang Duck" data-price="10,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/M3.jpg" alt="Orang Duck" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Orang Duck</span>
+      <span class="tile-chinese">橙子鸭</span>
+    </div>
+    <span class="tile-price">€10,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tantan-lunch" data-code="M4" data-name="Mala DouFu" data-price="10,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/M4.jpg" alt="Mala DouFu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mala DouFu</span>
+      <span class="tile-chinese">麻辣豆腐</span>
+    </div>
+    <span class="tile-price">€10,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tantan-lunch" data-code="M5" data-name="SuJiaoZi" data-price="10,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/M5.jpg" alt="SuJiaoZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">SuJiaoZi</span>
+      <span class="tile-chinese">素饺子</span>
+    </div>
+    <span class="tile-price">€10,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tantan-lunch" data-code="M6" data-name="SzeChuan Pork" data-price="11,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/M6.jpg" alt="SzeChuan Pork" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">SzeChuan Pork</span>
+      <span class="tile-chinese">四川猪肉</span>
+    </div>
+    <span class="tile-price">€11,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="kaiweicai--starter" data-category="kaiweicai--starter" data-code="K1" data-name="Mouth Watering Chicken" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K1.jpg" alt="KouShuiJi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mouth Watering Chicken</span>
+      <span class="tile-chinese">口水鸡</span>
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K2" data-name="Spicy Sliced Beef &amp; Tripe" data-price="9,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K2.jpg" alt="FuQiFeiPian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Spicy Sliced Beef &amp; Tripe</span>
+      <span class="tile-chinese">夫妻肺片</span>
+    </div>
+    <span class="tile-price">€9,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K3" data-name="Knusprige Spareribs" data-price="8,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K3.jpg" alt="SuPaiGu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Knusprige Spareribs</span>
+      <span class="tile-chinese">酥排骨</span>
+    </div>
+    <span class="tile-price">€8,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K4" data-name="Spicy Tripe" data-price="8,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K4.jpg" alt="NiuBaiYe" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Spicy Tripe</span>
+      <span class="tile-chinese">牛百叶</span>
+    </div>
+    <span class="tile-price">€8,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K5" data-name="Smashed Cucumber Salad" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K5.jpg" alt="PaiHuangGua" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Smashed Cucumber Salad</span>
+      <span class="tile-chinese">拍黄瓜</span>
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K6" data-name="Geräucherter Tofu" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K6.jpg" alt="XianCaiGanSi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Geräucherter Tofu</span>
+      <span class="tile-chinese">香菜干丝</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K7" data-name="Shredded Potatoes" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K7.jpg" alt="LiangBanTuDouSi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Shredded Potatoes</span>
+      <span class="tile-chinese">凉拌土豆丝</span>
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K8" data-name="Tiger Peppers" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K8.jpg" alt="HuPiQingJiao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tiger Peppers</span>
+      <span class="tile-chinese">虎皮青椒</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K9" data-name="Morel Salad" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K9.jpg" alt="BanMuEr" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Morel Salad</span>
+      <span class="tile-chinese">拌木耳</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K10" data-name="Sweet &amp; Sour Jellyfish" data-price="9,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K10.jpg" alt="TangCuHaiZhe" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sweet &amp; Sour Jellyfish</span>
+      <span class="tile-chinese">糖醋海蛰</span>
+    </div>
+    <span class="tile-price">€9,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="kaiweicai--starter" data-code="K11" data-name="Homemade Cabbage" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/K11.jpg" alt="PaoCai" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Homemade Cabbage</span>
+      <span class="tile-chinese">泡菜</span>
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="tang--suppe" data-category="tang--suppe" data-code="S1" data-name="Daily Soup" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/S1.jpg" alt="TanTan TagesSuppe" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Daily Soup</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tang--suppe" data-code="S2" data-name="WonTon Suppe" data-price="5,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/S2.jpg" alt="YunDungTang" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">WonTon Suppe</span>
+      <span class="tile-chinese">云炖汤</span>
+    </div>
+    <span class="tile-price">€5,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tang--suppe" data-code="S3" data-name="Tom Yum Soup" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/S3.jpg" alt="DongYinGon" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tom Yum Soup</span>
+      <span class="tile-chinese">冬阴功汤</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tang--suppe" data-code="S4" data-name="Vegetable Soup" data-price="5,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/S4.jpg" alt="ShuCaiTang" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Vegetable Soup</span>
+      <span class="tile-chinese">蔬菜汤</span>
+    </div>
+    <span class="tile-price">€5,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="dianxin--dimsum" data-category="dianxin--dimsum" data-code="D1" data-name="Shrimp DimSum" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D1.jpg" alt="XiaJiao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Shrimp DimSum</span>
+      <span class="tile-chinese">虾饺</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D2" data-name="Wild Garlic DimSum" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D2.jpg" alt="JiuCaiJiao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Wild Garlic DimSum</span>
+      <span class="tile-chinese">韭菜饺</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D3a" data-name="Pork ShaoMai" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D3a.jpg" alt="ShaoMai (Pork)" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pork ShaoMai</span>
+      <span class="tile-chinese">烧卖</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D3b" data-name="Chicken ShaoMai" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D3b.jpg" alt="ShaoMai (Chicken)" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chicken ShaoMai</span>
+      <span class="tile-chinese">鸡肉烧卖</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D4" data-name="Fried LongXia DimSum" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D4.jpg" alt="LongXiaJiao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Fried LongXia DimSum</span>
+      <span class="tile-chinese">龙虾饺</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D5" data-name="Beef Curry DimSum" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D5.jpg" alt="GaLiJiao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Beef Curry DimSum</span>
+      <span class="tile-chinese">牛肉咖喱饺</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D6" data-name="Vegetable DimSum" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D6.jpg" alt="SuFenGuo" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Vegetable DimSum</span>
+      <span class="tile-chinese">素粉果</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D7" data-name="DimSum Platter" data-price="24,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D7.jpg" alt="DianXinPinPan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">DimSum Platter</span>
+      <span class="tile-chinese">点心拼盘</span>
+    </div>
+    <span class="tile-price">€24,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D8" data-name="Spring Rolls" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D8.jpg" alt="SuChunJuan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Spring Rolls</span>
+      <span class="tile-chinese">素春卷</span>
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="dianxin--dimsum" data-code="D9" data-name="Shrimp Rolls" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/D9.jpg" alt="XiaHeZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Shrimp Rolls</span>
+      <span class="tile-chinese">虾盒子</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="jiaozi--dumplings" data-category="jiaozi--dumplings" data-code="T1" data-name="Vegetable Dumplings" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T1.jpg" alt="SuJiaoZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Vegetable Dumplings</span>
+      <span class="tile-chinese">素饺子</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="jiaozi--dumplings" data-code="T2" data-name="Chicken Dumplings" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T2.jpg" alt="JiRouJiaoZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chicken Dumplings</span>
+      <span class="tile-chinese">鸡肉饺子</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="jiaozi--dumplings" data-code="T3" data-name="Pork Dumplings" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T3.jpg" alt="ZhuRouJiaoZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pork Dumplings</span>
+      <span class="tile-chinese">猪肉饺子</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="jiaozi--dumplings" data-code="T4" data-name="Mixed Dumplings" data-price="6,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T4.jpg" alt="ShiJinJiaoZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mixed Dumplings</span>
+      <span class="tile-chinese">什锦饺子</span>
+    </div>
+    <span class="tile-price">€6,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="jiaozi--dumplings" data-code="T5" data-name="Pan-Fried Buns" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T5.jpg" alt="ShengJianBao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pan-Fried Buns</span>
+      <span class="tile-chinese">生煎包</span>
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="jiaozi--dumplings" data-code="T6" data-name="Vegetable Buns" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T6.jpg" alt="SuXiaoLongBao" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Vegetable Buns</span>
+      <span class="tile-chinese">素小笼包</span>
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="jiaozi--dumplings" data-code="T7" data-name="Chili Oil Wontons" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/T7.jpg" alt="HongYouChaoShou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chili Oil Wontons</span>
+      <span class="tile-chinese">红油抄手</span>
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="mian--nudeln" data-category="mian--nudeln" data-code="N1" data-name="Beef Noodle Soup" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N1.jpg" alt="HongShaoNiuRouMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Beef Noodle Soup</span>
+      <span class="tile-chinese">红烧牛肉面</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N2" data-name="Pork Noodles" data-price="14,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N2.jpg" alt="ZhuPaiZhaJiangMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pork Noodles</span>
+      <span class="tile-chinese">猪排炒酱面</span>
+    </div>
+    <span class="tile-price">€14,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N3" data-name="Chicken Noodles" data-price="14,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N3.jpg" alt="TanTanBanMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chicken Noodles</span>
+      <span class="tile-chinese">鸡排拌面</span>
+    </div>
+    <span class="tile-price">€14,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N4" data-name="Duck Noodles" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N4.jpg" alt="YaZiBanMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Duck Noodles</span>
+      <span class="tile-chinese">鸭子拌面</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N5" data-name="Lamb Noodles" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N5.jpg" alt="FanQieYangRouBanMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Lamb Noodles</span>
+      <span class="tile-chinese">番茄羊肉拌面</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N6" data-name="Seafood Noodles" data-price="16,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N6.jpg" alt="TanTanHaiXianMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Seafood Noodles</span>
+      <span class="tile-chinese">海鲜面</span>
+    </div>
+    <span class="tile-price">€16,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N7" data-name="Dan Dan Noodles" data-price="13,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N7.jpg" alt="SiChuanDanDanMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Dan Dan Noodles</span>
+      <span class="tile-chinese">四川担担面</span>
+    </div>
+    <span class="tile-price">€13,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N8" data-name="Cold Chicken Noodles" data-price="14,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N8.jpg" alt="JiRouHongYouLiangMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Cold Chicken Noodles</span>
+      <span class="tile-chinese">鸡肉红油凉面</span>
+    </div>
+    <span class="tile-price">€14,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N9" data-name="Dumpling Soup" data-price="13,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N9.jpg" alt="SuanTangJiaoZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Dumpling Soup</span>
+      <span class="tile-chinese">酸汤饺子</span>
+    </div>
+    <span class="tile-price">€13,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="mian--nudeln" data-code="N10" data-name="Tofu Tomato Noodles" data-price="13,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/N10.jpg" alt="XiHongShiDouFuBanMian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tofu Tomato Noodles</span>
+      <span class="tile-chinese">西红柿豆腐拌面</span>
+    </div>
+    <span class="tile-price">€13,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="zhengcai--hauptspeise" data-category="zhengcai--hauptspeise" data-code="H1" data-name="TanTan Chicken" data-price="14,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H1.jpg" alt="TanTanJi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">TanTan Chicken</span>
+      <span class="tile-chinese">TanTan鸡</span>
+    </div>
+    <span class="tile-price">€14,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H2" data-name="Mixed Chicken" data-price="13,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H2.jpg" alt="ShiJinJi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mixed Chicken</span>
+      <span class="tile-chinese">什锦鸡</span>
+    </div>
+    <span class="tile-price">€13,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H3" data-name="Scallion Beef" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H3.jpg" alt="CongBaoNiuRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Scallion Beef</span>
+      <span class="tile-chinese">葱爆牛肉</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H4" data-name="Boiled Beef in Chili" data-price="17,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H4.jpg" alt="ShuiZhuNiuRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Boiled Beef in Chili</span>
+      <span class="tile-chinese">水煮牛肉</span>
+    </div>
+    <span class="tile-price">€17,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H5" data-name="Sour Soup Beef" data-price="17,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H5.jpg" alt="SuanTangNiuRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sour Soup Beef</span>
+      <span class="tile-chinese">酸汤牛肉</span>
+    </div>
+    <span class="tile-price">€17,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H6" data-name="Sizzling Lamb" data-price="17,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H6.jpg" alt="TieBanYangRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sizzling Lamb</span>
+      <span class="tile-chinese">铁板羊肉</span>
+    </div>
+    <span class="tile-price">€17,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H7" data-name="Cumin Lamb" data-price="17,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H7.jpg" alt="ZiRanYangRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Cumin Lamb</span>
+      <span class="tile-chinese">孜然羊肉</span>
+    </div>
+    <span class="tile-price">€17,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H8" data-name="Twice-Cooked Pork" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H8.jpg" alt="HuiGuoRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Twice-Cooked Pork</span>
+      <span class="tile-chinese">回锅肉</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H9" data-name="Sweet &amp; Sour Pork" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H9.jpg" alt="TanTanTangCuRou" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sweet &amp; Sour Pork</span>
+      <span class="tile-chinese">TANTAN糖醋肉</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H10" data-name="Crispy Duck" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H10.jpg" alt="XiangShuYa" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Crispy Duck</span>
+      <span class="tile-chinese">香酥鸭</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H11" data-name="Mango Duck" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H11.jpg" alt="MangGuoYa" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mango Duck</span>
+      <span class="tile-chinese">芒果鸭</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H12" data-name="Red Curry Duck" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H12.jpg" alt="HongGaLiYa" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Red Curry Duck</span>
+      <span class="tile-chinese">红咖喱鸭</span>
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H13" data-name="Home-Style Tofu" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H13.jpg" alt="JiaChangDouFu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Home-Style Tofu</span>
+      <span class="tile-chinese">家常豆腐</span>
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H14" data-name="Mapo Tofu" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H14.jpg" alt="MaPoDouFu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mapo Tofu</span>
+      <span class="tile-chinese">麻婆豆腐</span>
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H15" data-name="Spicy Eggplant" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H15.jpg" alt="YuXiangQieZi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Spicy Eggplant</span>
+      <span class="tile-chinese">鱼香茄子</span>
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H16" data-name="Three Treasures" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H16.jpg" alt="DiSanXian" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Three Treasures</span>
+      <span class="tile-chinese">地三鲜</span>
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H17" data-name="Mushroom Bok Choy" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H17.jpg" alt="XiangGuChaoQingCai" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mushroom Bok Choy</span>
+      <span class="tile-chinese">香菇炒青菜</span>
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H18" data-name="Salt &amp; Pepper Prawns" data-price="19,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H18.jpg" alt="JiaoYanDaXia" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Salt &amp; Pepper Prawns</span>
+      <span class="tile-chinese">椒盐大虾</span>
+    </div>
+    <span class="tile-price">€19,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H19" data-name="TanTan Tomato Fish" data-price="32,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H19.jpg" alt="TanTanFanQieYu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">TanTan Tomato Fish</span>
+      <span class="tile-chinese">TANTAN番茄鱼</span>
+    </div>
+    <span class="tile-price">€32,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H20" data-name="Pickled Cabbage Fish" data-price="32,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H20.jpg" alt="SuanCaiYu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Pickled Cabbage Fish</span>
+      <span class="tile-chinese">酸菜鱼</span>
+    </div>
+    <span class="tile-price">€32,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="zhengcai--hauptspeise" data-code="H21" data-name="Boiled Fish in Chili" data-price="32,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/H21.jpg" alt="ShuiZhuYu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Boiled Fish in Chili</span>
+      <span class="tile-chinese">水煮鱼</span>
+    </div>
+    <span class="tile-price">€32,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="beilage-/-desserts" data-category="beilage-/-desserts" data-code="B1" data-name="Jasmin Reis" data-price="2,20" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/B1.jpg" alt="MiFan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Jasmin Reis</span>
+      <span class="tile-chinese">米饭</span>
+    </div>
+    <span class="tile-price">€2,20</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilage-/-desserts" data-code="B2" data-name="Gebr. EierReis (klein)" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/B2.jpg" alt="ChaoFan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gebr. EierReis (klein)</span>
+      <span class="tile-chinese">炒饭</span>
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilage-/-desserts" data-code="B2G" data-name="Gebr. EierReis (gross)" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/B2G.jpg" alt="ChaoFan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gebr. EierReis (gross)</span>
+      <span class="tile-chinese">炒饭</span>
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilage-/-desserts" data-code="B4" data-name="Alaska Eiscreme flamb." data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/B4.jpg" alt="HuoBingQiu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Alaska Eiscreme flamb.</span>
+      <span class="tile-chinese">火冰球</span>
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilage-/-desserts" data-code="B5" data-name="Kürbis Reisteig" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/B5.jpg" alt="NanGuaBing" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kürbis Reisteig</span>
+      <span class="tile-chinese">南瓜饼</span>
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="beilage-/-desserts" data-code="B6" data-name="Reisteig mit Brauner Zucker" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/nano/B6.jpg" alt="HongTangCiBa" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Reisteig mit Brauner Zucker</span>
+      <span class="tile-chinese">红糖糍粑</span>
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+</div>
+
+<div class="container">
+<div id="drinks-anchor"></div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">红白酒</span>
+    <h2 class="section-title">TanTan Wein Keller</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-TAN1" data-name="Scheiblhofer Big John Cuvée Reserve" data-price="50,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Scheiblhofer Big John Cuvée Reserve</span>
+      <span class="drink-detail">Zweigelt trocken 14%vol 0,75l</span>
+      <span class="drink-price">50,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TAN2" data-name="Müller Grüner Veltliner" data-price="37,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Müller Grüner Veltliner</span>
+      <span class="drink-detail">Grüner Veltliner 12,50%vol 0,75l</span>
+      <span class="drink-price">37,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TAN3" data-name="Händler Chardonnay" data-price="40,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Händler Chardonnay</span>
+      <span class="drink-detail">Chardonnay 13,50%vol 0,75l</span>
+      <span class="drink-price">40,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">饮料</span>
+    <h2 class="section-title">Alkoholfrei / Softdrinks</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-ALK1" data-name="Soda / Soda Zitrone" data-price="0,30L 2,50/2,70" onclick="toggleSelect(this)">
+      <span class="drink-name">Soda / Soda Zitrone</span>
+      <span class="drink-price">0,30L 2,50/2,70 · 0,50L 3,50/3,80</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK2" data-name="Holunder/Himbeer SODA" data-price="0,30L 2,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Holunder/Himbeer SODA</span>
+      <span class="drink-price">0,30L 2,90 · 0,50L 4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK3" data-name="Mineral mit/ohne" data-price="0,33L 3,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Mineral mit/ohne</span>
+      <span class="drink-price">0,33L 3,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK4" data-name="Coca Cola / Zero / Sprite / Fanta / Almdudler" data-price="0,33Fl 3,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca Cola / Zero / Sprite / Fanta / Almdudler</span>
+      <span class="drink-price">0,33Fl 3,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK5" data-name="Cola / Zero / Sprite / Fanta / Almdudler / Spezi" data-price="0,50L 4,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Cola / Zero / Sprite / Fanta / Almdudler / Spezi</span>
+      <span class="drink-price">0,50L 4,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK6" data-name="Pago Marille / Johannesbeer" data-price="0,20Fl 3,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Pago Marille / Johannesbeer</span>
+      <span class="drink-price">0,20Fl 3,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK7" data-name="Lychee / Mango / Aloe vera" data-price="0,30L 3,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Lychee / Mango / Aloe vera</span>
+      <span class="drink-price">0,30L 3,90 · 0,50L 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK8" data-name="Apfelsaft / Orangensaft" data-price="0,30L 3,60" onclick="toggleSelect(this)">
+      <span class="drink-name">Apfelsaft / Orangensaft</span>
+      <span class="drink-price">0,30L 3,60 · 0,50L 5,70</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK9" data-name="Gespritzte mit Wasser/Soda" data-price="0,30L 3,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Gespritzte mit Wasser/Soda</span>
+      <span class="drink-price">0,30L 3,00 · 0,50L 4,20/4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK10" data-name="Calpis gespritzt" data-price="0,50L 5,50/5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Calpis gespritzt</span>
+      <span class="drink-price">0,50L 5,50/5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK11" data-name="Wiener Hochquellwasser" data-price="0,50L 1,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Wiener Hochquellwasser</span>
+      <span class="drink-price">0,50L 1,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK12" data-name="Tonic Water" data-price="0,20L 3,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Tonic Water</span>
+      <span class="drink-price">0,20L 3,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-ALK13" data-name="Red Bull" data-price="0,25L 4,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Red Bull</span>
+      <span class="drink-price">0,25L 4,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">自制冰饮</span>
+    <h2 class="section-title">Hausgemachte Limonade</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-HAU1" data-name="TanTan Limonade (Orange, Apfel, Lemonglass, Minze)" data-price="0,50L 5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">TanTan Limonade (Orange, Apfel, Lemonglass, Minze)</span>
+      <span class="drink-price">0,50L 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-HAU2" data-name="GingerLimetten Limonade (0% Kalorien)" data-price="0,50L 5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">GingerLimetten Limonade (0% Kalorien)</span>
+      <span class="drink-price">0,50L 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-HAU3" data-name="Drachenfrucht Zitrone Limonade (0% Kalorien)" data-price="0,50L 5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Drachenfrucht Zitrone Limonade (0% Kalorien)</span>
+      <span class="drink-price">0,50L 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-HAU4" data-name="PfirsichMaracuja Limonade" data-price="0,50L 5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">PfirsichMaracuja Limonade</span>
+      <span class="drink-price">0,50L 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-HAU5" data-name="GurkenLimetten Limonade" data-price="0,50L 5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">GurkenLimetten Limonade</span>
+      <span class="drink-price">0,50L 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">茶</span>
+    <h2 class="section-title">Tee / Tea</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-TEE1" data-name="OoLongCha 乌龙茶" data-price="5,50" onclick="toggleSelect(this)">
+      <span class="drink-name">OoLongCha 乌龙茶</span>
+      <span class="drink-price">5,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE2" data-name="RosenTee 玄瑰茶" data-price="5,50" onclick="toggleSelect(this)">
+      <span class="drink-name">RosenTee 玄瑰茶</span>
+      <span class="drink-price">5,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE3" data-name="AnJiBaiCha 安吉白茶 AnJi Weiss Tee" data-price="5,50" onclick="toggleSelect(this)">
+      <span class="drink-name">AnJiBaiCha 安吉白茶 AnJi Weiss Tee</span>
+      <span class="drink-price">5,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE4" data-name="WuYuTai 吴裕泰茉莉花茶 Jasmine Tee" data-price="5,50" onclick="toggleSelect(this)">
+      <span class="drink-name">WuYuTai 吴裕泰茉莉花茶 Jasmine Tee</span>
+      <span class="drink-price">5,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE5" data-name="BaBaoCha 八宝茶 Achtschätze Tee" data-price="5,50" onclick="toggleSelect(this)">
+      <span class="drink-name">BaBaoCha 八宝茶 Achtschätze Tee</span>
+      <span class="drink-price">5,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE6" data-name="JianCha 姜茶 Ingwer Tee" data-price="4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">JianCha 姜茶 Ingwer Tee</span>
+      <span class="drink-price">4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE7" data-name="Grüner / Jasmin Tee" data-price="4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Grüner / Jasmin Tee</span>
+      <span class="drink-price">4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-TEE8" data-name="Schwarzer Tee / Früchte Tee" data-price="4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Schwarzer Tee / Früchte Tee</span>
+      <span class="drink-price">4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">烈酒</span>
+    <h2 class="section-title">Schnaps / Spirits <span class="section-allergen-note"><span class="allergen-badge" title="Glutenhaltiges Getreide">A</span></span></h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-SCH1" data-name="LuZhouLaoJiao 100ml" data-price="16,50" onclick="toggleSelect(this)">
+      <span class="drink-name">LuZhouLaoJiao 100ml</span>
+      <span class="drink-price">16,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH2" data-name="MaoTai 2cl" data-price="5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">MaoTai 2cl</span>
+      <span class="drink-price">5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH3" data-name="Ginseng Schnaps 2cl" data-price="5,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Ginseng Schnaps 2cl</span>
+      <span class="drink-price">5,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH4" data-name="Bambus Schnaps 2cl" data-price="4,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Bambus Schnaps 2cl</span>
+      <span class="drink-price">4,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH5" data-name="GaoLiangJiu 2cl" data-price="4,90" onclick="toggleSelect(this)">
+      <span class="drink-name">GaoLiangJiu 2cl</span>
+      <span class="drink-price">4,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH6" data-name="WuJiaPi 2cl" data-price="4,90" onclick="toggleSelect(this)">
+      <span class="drink-name">WuJiaPi 2cl</span>
+      <span class="drink-price">4,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH7" data-name="Barack 2cl" data-price="4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Barack 2cl</span>
+      <span class="drink-price">4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH8" data-name="Martini 4cl" data-price="4,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Martini 4cl</span>
+      <span class="drink-price">4,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH9" data-name="Campari-Soda/Orange" data-price="5,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Campari-Soda/Orange</span>
+      <span class="drink-price">5,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH10" data-name="Wodka 2cl" data-price="4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Wodka 2cl</span>
+      <span class="drink-price">4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH11" data-name="Gin 4cl" data-price="7,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Gin 4cl</span>
+      <span class="drink-price">7,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH12" data-name="Gin Tonic" data-price="8,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Gin Tonic</span>
+      <span class="drink-price">8,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH13" data-name="Cognac 2cl" data-price="5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Cognac 2cl</span>
+      <span class="drink-price">5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-SCH14" data-name="Whisky 2cl" data-price="5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Whisky 2cl</span>
+      <span class="drink-price">5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">啤酒</span>
+    <h2 class="section-title">Bier / Beer <span class="section-allergen-note"><span class="allergen-badge" title="Glutenhaltiges Getreide">A</span> <span class="allergen-badge" title="Schwefeldioxid und Sulfite">O</span></span></h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-BIE1" data-name="Gösser Gold Fass" data-price="0,30L 4,30" onclick="toggleSelect(this)">
+      <span class="drink-name">Gösser Gold Fass</span>
+      <span class="drink-price">0,30L 4,30 · 0,50L 5,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE2" data-name="Radler" data-price="0,30L 4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Radler</span>
+      <span class="drink-price">0,30L 4,50 · 0,50L 5,30</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE3" data-name="Tsingtao Beer" data-price="0,33Fl 4,70" onclick="toggleSelect(this)">
+      <span class="drink-name">Tsingtao Beer</span>
+      <span class="drink-price">0,33Fl 4,70</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE4" data-name="Budweiser" data-price="0,50Fl 5,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Budweiser</span>
+      <span class="drink-price">0,50Fl 5,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE5" data-name="Weizenbier" data-price="0,50Fl 5,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Weizenbier</span>
+      <span class="drink-price">0,50Fl 5,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE6" data-name="Dunkles Bier" data-price="0,50Fl 5,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Dunkles Bier</span>
+      <span class="drink-price">0,50Fl 5,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE7" data-name="Alkoholfr. Bier" data-price="0,50Fl 5,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Alkoholfr. Bier</span>
+      <span class="drink-price">0,50Fl 5,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-BIE8" data-name="Heineken" data-price="0,33Fl 4,70" onclick="toggleSelect(this)">
+      <span class="drink-name">Heineken</span>
+      <span class="drink-price">0,33Fl 4,70</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">酒</span>
+    <h2 class="section-title">Wein / Wine <span class="section-allergen-note"><span class="allergen-badge" title="Schwefeldioxid und Sulfite">O</span></span></h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-WEI1" data-name="Haus Weisswein" data-price="1/8 3,30" onclick="toggleSelect(this)">
+      <span class="drink-name">Haus Weisswein</span>
+      <span class="drink-price">1/8 3,30 · 1/4 5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI2" data-name="Haus Rotwein" data-price="1/8 3,40" onclick="toggleSelect(this)">
+      <span class="drink-name">Haus Rotwein</span>
+      <span class="drink-price">1/8 3,40 · 1/4 6,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI3" data-name="Spritzer Rot/Weiß" data-price="3,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Spritzer Rot/Weiß</span>
+      <span class="drink-price">3,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI4" data-name="Aperol Prosecco / Spritzer" data-price="6,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Aperol Prosecco / Spritzer</span>
+      <span class="drink-price">6,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI5" data-name="Himbeer Spritzer" data-price="6,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Himbeer Spritzer</span>
+      <span class="drink-price">6,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI6" data-name="Hugo Spritzer" data-price="6,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Hugo Spritzer</span>
+      <span class="drink-price">6,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI7" data-name="Pflaumenwein / Mandarinenwein warm" data-price="6cl 4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Pflaumenwein / Mandarinenwein warm</span>
+      <span class="drink-price">6cl 4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI8" data-name="Sparkling Brut, Schlumberger" data-price="39,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Sparkling Brut, Schlumberger</span>
+      <span class="drink-price">39,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI9" data-name="Sekt Hochriegel trocken" data-price="28,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Sekt Hochriegel trocken</span>
+      <span class="drink-price">28,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-WEI10" data-name="Sekt / Sekt-Orange" data-price="Glas 5,50/5,00" onclick="toggleSelect(this)">
+      <span class="drink-name">Sekt / Sekt-Orange</span>
+      <span class="drink-price">Glas 5,50/5,00</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <span class="section-chinese">咖啡</span>
+    <h2 class="section-title">Kaffee / Coffee</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="DR-KAF1" data-name="Espresso kleiner / doppelter" data-price="2,50 / 4,20" onclick="toggleSelect(this)">
+      <span class="drink-name">Espresso kleiner / doppelter</span>
+      <span class="drink-price">2,50 / 4,20</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-KAF2" data-name="Brauner kleiner / großer" data-price="2,80 / 4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Brauner kleiner / großer</span>
+      <span class="drink-price">2,80 / 4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-KAF3" data-name="Verlängerter ohne/mit Milch" data-price="3,20 / 3,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Verlängerter ohne/mit Milch</span>
+      <span class="drink-price">3,20 / 3,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-KAF4" data-name="Melange" data-price="3,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Melange</span>
+      <span class="drink-price">3,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-KAF5" data-name="Cappuccino" data-price="3,70" onclick="toggleSelect(this)">
+      <span class="drink-name">Cappuccino</span>
+      <span class="drink-price">3,70</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="DR-KAF6" data-name="Cafe Latte" data-price="4,50" onclick="toggleSelect(this)">
+      <span class="drink-name">Cafe Latte</span>
+      <span class="drink-price">4,50</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+
+<div class="menu-section">
+  <div class="section-header">
+    <span class="section-chinese">过敏原</span>
+    <h2 class="section-title">Allergene / Allergens</h2>
+  </div>
+  <div class="allergen-legend">
+<div class="legend-item"><span class="allergen-badge">A</span> Glutenhaltiges Getreide</div>
+<div class="legend-item"><span class="allergen-badge">B</span> Krebstiere</div>
+<div class="legend-item"><span class="allergen-badge">C</span> Eier von Geflügel</div>
+<div class="legend-item"><span class="allergen-badge">D</span> Fisch</div>
+<div class="legend-item"><span class="allergen-badge">E</span> Erdnüsse</div>
+<div class="legend-item"><span class="allergen-badge">F</span> Sojabohnen</div>
+<div class="legend-item"><span class="allergen-badge">G</span> Milchprodukte inkl. Laktose</div>
+<div class="legend-item"><span class="allergen-badge">H</span> Schalenfrüchte</div>
+<div class="legend-item"><span class="allergen-badge">L</span> Sellerie</div>
+<div class="legend-item"><span class="allergen-badge">M</span> Senf</div>
+<div class="legend-item"><span class="allergen-badge">N</span> Sesam</div>
+<div class="legend-item"><span class="allergen-badge">O</span> Schwefeldioxid und Sulfite</div>
+<div class="legend-item"><span class="allergen-badge">P</span> Lupinen</div>
+<div class="legend-item"><span class="allergen-badge">R</span> Weichtiere (Muschel, Tintenfisch…)</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="tab-selection" class="tab-content">
+  <div class="receipt" id="receipt">
+    <div class="receipt-header">
+      <h3>TANTAN</h3>
+      <p>Chinese Fine Dining &middot; Vienna</p>
+      <p>Your Selection</p>
+    </div>
+    <div id="receipt-body">
+      <p class="receipt-empty">Tap items on the menu to add them here</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div>Alle Speisen auch zum Mitnehmen &mdash; All dishes also for takeaway</div>
+  <div>Druckfehler und Preisänderung vorbehalten</div>
+  <div style="margin-top:6px;">&copy; TANTAN Chinese Fine Dining &middot; Wien</div>
+</footer>
+
+<script>
+// ---- Tab switching ----
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    // Show/hide category pills based on active tab
+    const catNav = document.querySelector('.cat-nav');
+    if (catNav) catNav.style.display = btn.dataset.tab === 'menu' ? 'flex' : 'none';
+    window.scrollTo(0, 0);
+  });
+});
+
+// ---- Category pill navigation ----
+document.querySelectorAll('.cat-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+    pill.classList.add('cat-pill--active');
+    const cat = pill.dataset.cat;
+    if (cat === 'all') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    // Handle drinks pill specially (scroll to drinks anchor)
+    if (cat === 'drinks') {
+      const anchor = document.getElementById('drinks-anchor');
+      if (anchor) {
+        const hdrH = document.querySelector('.site-header').offsetHeight;
+        const y = anchor.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      return;
+    }
+    const sentinel = document.querySelector('#tab-menu [data-category-start="' + cat + '"]');
+    if (sentinel) {
+      const hdrH = document.querySelector('.site-header').offsetHeight;
+      const y = sentinel.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+});
+
+// ---- Auto-highlight pill on scroll ----
+const catNav = document.querySelector('.cat-nav');
+if (catNav) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const cat = entry.target.getAttribute('data-category-start');
+        if (cat) {
+          document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+          const pill = document.querySelector('.cat-pill[data-cat="' + cat + '"]');
+          if (pill) {
+            pill.classList.add('cat-pill--active');
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    });
+  }, { rootMargin: '-' + catNav.offsetHeight + 'px 0px -80% 0px', threshold: 0 });
+  document.querySelectorAll('[data-category-start]').forEach(el => observer.observe(el));
+}
+
+// ---- Selection / Receipt system ----
+const selected = new Map(); // code -> {name, price, chinese, qty}
+
+function toggleSelect(el) {
+  const code = el.dataset.code;
+  const name = el.dataset.name;
+  const price = el.dataset.price;
+  const chEl = el.querySelector('.tile-chinese');
+  const chinese = chEl ? chEl.textContent : '';
+
+  if (selected.has(code)) {
+    selected.delete(code);
+    el.classList.remove('selected');
+  } else {
+    selected.set(code, { name, price, chinese, qty: 1 });
+    el.classList.add('selected');
+  }
+  updateReceipt();
+}
+
+function changeQty(code, delta) {
+  const item = selected.get(code);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) {
+    selected.delete(code);
+    // Remove selected class from menu tile/drink row
+    document.querySelectorAll('[data-code="' + code + '"]').forEach(el => el.classList.remove('selected'));
+  }
+  updateReceipt();
+}
+
+function clearAll() {
+  selected.clear();
+  document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+  updateReceipt();
+}
+
+function parsePrice(p) {
+  // Handle prices like "0,30L 2,50" -> extract last number
+  const matches = p.match(/(\d+[,.]\d+)/g);
+  if (matches) return parseFloat(matches[matches.length - 1].replace(',', '.'));
+  return 0;
+}
+
+function updateReceipt() {
+  const badge = document.getElementById('sel-badge');
+  const body = document.getElementById('receipt-body');
+
+  // Count total items (sum of quantities)
+  let totalItems = 0;
+  selected.forEach(item => totalItems += item.qty);
+
+  // Update badge
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  // Build receipt
+  if (selected.size === 0) {
+    body.innerHTML = '<p class="receipt-empty">Tap items on the menu to add them here</p>';
+    return;
+  }
+
+  let total = 0;
+  let html = '<ul class="receipt-items">';
+  selected.forEach((item, code) => {
+    const unitPrice = parsePrice(item.price);
+    const lineTotal = unitPrice * item.qty;
+    total += lineTotal;
+    const chineseSpan = item.chinese ? '<span class="receipt-item-chinese">' + item.chinese + '</span>' : '';
+    html += '<li class="receipt-item">';
+    html += '<div class="receipt-item-left">';
+    html += '<span class="receipt-item-name">' + item.name + '</span>';
+    if (chineseSpan) html += chineseSpan;
+    html += '</div>';
+    html += '<div class="receipt-item-right">';
+    html += '<div class="qty-controls">';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code + '\',-1)">−</button>';
+    html += '<span class="qty-num">' + item.qty + '</span>';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code + '\',1)">+</button>';
+    html += '</div>';
+    html += '<span class="receipt-item-price">&euro;' + lineTotal.toFixed(2).replace('.', ',') + '</span>';
+    html += '</div>';
+    html += '</li>';
+  });
+  html += '</ul>';
+  html += '<div class="receipt-total">';
+  html += '<span class="receipt-total-label">TOTAL</span>';
+  html += '<span class="receipt-total-amount">&euro;' + total.toFixed(2).replace('.', ',') + '</span>';
+  html += '</div>';
+  html += '<p class="receipt-count">' + totalItems + ' item' + (totalItems !== 1 ? 's' : '') + '</p>';
+  html += '<button class="clear-btn" onclick="clearAll()">Clear All</button>';
+
+  body.innerHTML = html;
+}
+</script>
+
+</body>
+</html>

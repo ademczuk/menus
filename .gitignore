@@ -1,0 +1,9 @@
+# Never commit source code or keys
+*.py
+*.env
+*.sh
+*.log
+__pycache__/
+
+# Allow metadata JSON for gallery
+!.meta_*.json

@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Shoyu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0a0a;
+  color: #e0d8d0;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Header ---- */
+.site-header {
+  background: #0a0a0a;
+  text-align: center;
+  padding: 14px 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: 0.22em;
+  color: #fff;
+}
+.header-tagline {
+  font-weight: 300;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.4);
+  margin-top: 2px;
+}
+
+/* ---- Tab Bar ---- */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-top: 12px;
+  border-bottom: 2px solid #222;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #666;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.tab.active {
+  color: #c41e3a;
+  border-bottom-color: #c41e3a;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ---- Category Pill Nav ---- */
+.cat-nav {
+  background: #0a0a0a;
+  padding: 6px 8px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  display: flex;
+  gap: 6px;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 1px solid #1a1a1a;
+}
+.cat-nav::-webkit-scrollbar { display: none; }
+.cat-pill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid #333;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #888;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cat-pill--active {
+  background: #c41e3a;
+  color: #fff;
+  border-color: #c41e3a;
+}
+
+/* ---- Instagram Grid ---- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+/* ---- Tile ---- */
+.menu-tile {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 9 / 16;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tile-image {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #111;
+}
+.tile-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.menu-tile:hover .tile-image img { transform: scale(1.05); }
+.menu-tile::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  pointer-events: none;
+}
+.tile-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 8px 10px;
+  gap: 6px;
+}
+.tile-name-wrap { flex: 1; min-width: 0; }
+.tile-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.tile-chinese {
+  display: block;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  margin-top: 1px;
+}
+.tile-price {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  align-self: flex-end;
+}
+
+/* ---- Selection Checkmark ---- */
+.tile-check {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 28px; height: 28px;
+  z-index: 3;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+.menu-tile.selected .tile-check { opacity: 1; transform: scale(1); }
+.menu-tile.selected { outline: 2px solid #22c55e; outline-offset: -2px; }
+
+/* ---- Receipt / Selection ---- */
+.receipt {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 24px 20px;
+  background: #111;
+  border: 1px dashed #333;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+.receipt-header { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed #333; margin-bottom: 12px; }
+.receipt-header h3 { font-size: 1.1rem; color: #fff; letter-spacing: 0.15em; font-weight: 700; }
+.receipt-header p { font-size: 0.65rem; color: #555; margin-top: 4px; }
+.receipt-empty { text-align: center; padding: 40px 0; color: #444; font-size: 0.8rem; }
+.receipt-items { list-style: none; }
+.receipt-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dotted #222; gap: 8px; }
+.receipt-item:last-child { border-bottom: none; }
+.receipt-item-left { flex: 1; min-width: 0; }
+.receipt-item-name { display: block; font-size: 0.75rem; color: #ccc; }
+.receipt-item-chinese { display: block; font-size: 0.6rem; color: #555; margin-top: 1px; }
+.receipt-item-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.qty-controls { display: flex; align-items: center; gap: 0; border: 1px solid #333; border-radius: 6px; overflow: hidden; }
+.qty-btn { width: 28px; height: 28px; background: #1a1a1a; border: none; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.qty-btn:active { background: #333; }
+.qty-num { width: 28px; text-align: center; font-size: 0.75rem; font-weight: 600; color: #fff; background: #111; }
+.receipt-item-price { font-size: 0.78rem; color: #ccc; white-space: nowrap; text-align: right; min-width: 55px; }
+.clear-btn { display: block; width: 100%; margin-top: 12px; padding: 10px; background: none; border: 1px solid #333; border-radius: 8px; color: #666; font-family: inherit; font-size: 0.72rem; cursor: pointer; transition: all 0.15s; }
+.clear-btn:active { background: #1a1a1a; color: #c41e3a; border-color: #c41e3a; }
+.receipt-total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0 4px; margin-top: 8px; border-top: 2px solid #333; font-weight: 700; }
+.receipt-total-label { font-size: 0.85rem; color: #fff; }
+.receipt-total-amount { font-size: 1rem; color: #22c55e; }
+.receipt-count { text-align: center; font-size: 0.65rem; color: #555; margin-top: 8px; }
+.selection-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; background: #22c55e; color: #000; font-size: 0.6rem; font-weight: 700; margin-left: 6px; padding: 0 5px; vertical-align: middle; }
+
+/* ---- Container ---- */
+.container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px 8px 80px; }
+
+/* ---- Sections ---- */
+.menu-section { margin-bottom: 28px; }
+.section-header { text-align: center; padding: 16px 8px 8px; }
+.section-chinese { display: block; font-size: 1.1rem; color: #c41e3a; letter-spacing: 0.1em; }
+.section-title { font-weight: 600; font-size: 0.95rem; color: #ccc; letter-spacing: 0.02em; }
+
+/* ---- Allergens ---- */
+.allergen-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-size: 0.55rem; font-weight: 600; border-radius: 50%; background: rgba(255,255,255,0.07); color: #888; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+
+/* ---- Drinks ---- */
+.drink-section .drink-list { background: #141414; border-radius: 12px; overflow: hidden; }
+.drink-row { display: flex; align-items: baseline; padding: 7px 12px; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s; }
+.drink-row:last-child { border-bottom: none; }
+.drink-row:active { background: rgba(34,197,94,0.08); }
+.drink-row.selected { background: rgba(34,197,94,0.1); }
+.drink-check { opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+.drink-row.selected .drink-check { opacity: 1; }
+.drink-name { flex: 1; font-size: 0.74rem; font-weight: 500; color: #bbb; min-width: 0; }
+.drink-detail { font-size: 0.62rem; color: #555; white-space: nowrap; }
+.drink-price { font-weight: 600; font-size: 0.74rem; color: #c41e3a; white-space: nowrap; text-align: right; min-width: 70px; }
+
+/* ---- Allergen Legend ---- */
+.allergen-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; background: #141414; border-radius: 12px; padding: 14px; margin-top: 6px; }
+.legend-item { font-size: 0.65rem; color: #777; display: flex; align-items: center; gap: 5px; }
+
+/* ---- Footer ---- */
+.site-footer { text-align: center; padding: 20px 16px 40px; font-size: 0.65rem; color: #444; line-height: 1.8; }
+
+/* ---- Print ---- */
+@media print {
+  body { background: #fff; color: #222; }
+  .site-header { background: #222 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; position: static; }
+  .tile-name { color: #222; }
+  .drink-section .drink-list { background: #f5f5f5; }
+  .drink-name { color: #222; }
+  .allergen-legend { background: #f5f5f5; }
+  .legend-item { color: #555; }
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-brand">SHOYU</div>
+  <div class="header-tagline">Japanese Kitchen · Vienna</div>
+  <div class="tab-bar">
+    <button class="tab active" data-tab="menu">Menu</button>
+    <button class="tab" data-tab="selection">Selection <span id="sel-badge" class="selection-badge" style="display:none">0</span></button>
+  </div>
+  <div class="cat-nav">
+<button class="cat-pill cat-pill--active" data-cat="all">All</button>
+<button class="cat-pill" data-cat="tapas">Tapas</button>
+<button class="cat-pill" data-cat="ramen">Ramen</button>
+<button class="cat-pill" data-cat="donburi">Donburi</button>
+<button class="cat-pill" data-cat="japan-curry">Japan Curry</button>
+<button class="cat-pill" data-cat="teishoku">Teishoku</button>
+<button class="cat-pill" data-cat="desserts">Desserts</button>
+<button class="cat-pill" data-cat="japanese-snacks-from-our-sho-pan-sho">Japanese Snacks from our SHO PAN SHO</button>
+<button class="cat-pill" data-cat="weekly-special">Weekly Special</button>
+<button class="cat-pill" data-cat="lunch-menu">Lunch Menu</button>
+<button class="cat-pill" data-cat="drinks">Drinks</button>
+</div>
+</header>
+
+<div id="tab-menu" class="tab-content active">
+<div class="menu-grid">
+<div class="menu-tile" data-category-start="tapas" data-category="tapas" data-code="T1" data-name="Wafu Salad" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T1.jpg" alt="Wafu Salad" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Wafu Salad</span>
+      
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T2" data-name="Wakame Salat" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T2.jpg" alt="Wakame Salat" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Wakame Salat</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T3" data-name="Horenso no goma ae" data-price="5,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T3.jpg" alt="Horenso no goma ae" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Horenso no goma ae</span>
+      
+    </div>
+    <span class="tile-price">€5,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T4" data-name="Ajitsuke Tamago" data-price="4,0" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T4.jpg" alt="Ajitsuke Tamago" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ajitsuke Tamago</span>
+      
+    </div>
+    <span class="tile-price">€4,0</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T5" data-name="Ajitsuke Menma" data-price="5,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T5.jpg" alt="Ajitsuke Menma" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ajitsuke Menma</span>
+      
+    </div>
+    <span class="tile-price">€5,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T6" data-name="Oshinko" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T6.jpg" alt="Oshinko" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Oshinko</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T7" data-name="Edamame" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T7.jpg" alt="Edamame" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Edamame</span>
+      
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T8" data-name="Agedashi Tofu" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T8.jpg" alt="Agedashi Tofu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Agedashi Tofu</span>
+      
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T9" data-name="Tori Karaage" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T9.jpg" alt="Tori Karaage" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tori Karaage</span>
+      
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T10" data-name="Gyoza" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T10.jpg" alt="Gyoza" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gyoza</span>
+      
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T11" data-name="Gyoza Vegetarisch" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T11.jpg" alt="Gyoza Vegetarisch" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gyoza Vegetarisch</span>
+      
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T12" data-name="Takoyaki" data-price="7,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T12.jpg" alt="Takoyaki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Takoyaki</span>
+      
+    </div>
+    <span class="tile-price">€7,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T13" data-name="Tonkatsu" data-price="8,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T13.jpg" alt="Tonkatsu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tonkatsu</span>
+      
+    </div>
+    <span class="tile-price">€8,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T14" data-name="Chicken Katsu" data-price="8,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T14.jpg" alt="Chicken Katsu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chicken Katsu</span>
+      
+    </div>
+    <span class="tile-price">€8,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T15" data-name="Cha Shiu" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T15.jpg" alt="Cha Shiu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Cha Shiu</span>
+      
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T16" data-name="Ebi Fry" data-price="13,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T16.jpg" alt="Ebi Fry" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ebi Fry</span>
+      
+    </div>
+    <span class="tile-price">€13,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T17" data-name="Sake Saikyo Yaki" data-price="11,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T17.jpg" alt="Sake Saikyo Yaki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sake Saikyo Yaki</span>
+      
+    </div>
+    <span class="tile-price">€11,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T18" data-name="Miso Suppe" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T18.jpg" alt="Miso Suppe" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Miso Suppe</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T19" data-name="Reis" data-price="2,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T19.jpg" alt="Reis" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Reis</span>
+      
+    </div>
+    <span class="tile-price">€2,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T20" data-name="Udon Nudeln" data-price="3,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T20.jpg" alt="Udon Nudeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Udon Nudeln</span>
+      
+    </div>
+    <span class="tile-price">€3,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T21" data-name="Soba Nudeln" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T21.jpg" alt="Soba Nudeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Soba Nudeln</span>
+      
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T22" data-name="Ramen Nudeln" data-price="3,00" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T22.jpg" alt="Ramen Nudeln" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ramen Nudeln</span>
+      
+    </div>
+    <span class="tile-price">€3,00</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="tapas" data-code="T23" data-name="Yaki Tori" data-price="8,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/T23.jpg" alt="Yaki Tori" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Yaki Tori</span>
+      
+    </div>
+    <span class="tile-price">€8,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="ramen" data-category="ramen" data-code="R1" data-name="Shoyu Ramen" data-price="14,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R1.jpg" alt="Shoyu Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Shoyu Ramen</span>
+      
+    </div>
+    <span class="tile-price">€14,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R2" data-name="Chicken Ramen" data-price="14,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R2.jpg" alt="Chicken Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chicken Ramen</span>
+      
+    </div>
+    <span class="tile-price">€14,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R3" data-name="Curry Ramen" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R3.jpg" alt="Curry Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Curry Ramen</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R4" data-name="Miso Ramen" data-price="14,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R4.jpg" alt="Miso Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Miso Ramen</span>
+      
+    </div>
+    <span class="tile-price">€14,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R5" data-name="Vegan Miso Ramen" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R5.jpg" alt="Vegan Miso Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Vegan Miso Ramen</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R6" data-name="Green Ramen" data-price="14,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R6.jpg" alt="Green Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Green Ramen</span>
+      
+    </div>
+    <span class="tile-price">€14,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R7" data-name="Kitsune Soba" data-price="13,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R7.jpg" alt="Kitsune Soba" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kitsune Soba</span>
+      
+    </div>
+    <span class="tile-price">€13,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R8" data-name="Kitsune Udon" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R8.jpg" alt="Kitsune Udon" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kitsune Udon</span>
+      
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R9" data-name="Shiro Sake Ramen" data-price="18,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R9.jpg" alt="Shiro Sake Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Shiro Sake Ramen</span>
+      
+    </div>
+    <span class="tile-price">€18,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R10" data-name="Mabo Tofu Ramen" data-price="16,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R10.jpg" alt="Mabo Tofu Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mabo Tofu Ramen</span>
+      
+    </div>
+    <span class="tile-price">€16,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="ramen" data-code="R11" data-name="XL Ramen" data-price="20,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/R11.jpg" alt="XL Ramen" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">XL Ramen</span>
+      
+    </div>
+    <span class="tile-price">€20,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="donburi" data-category="donburi" data-code="D1" data-name="Gyu Don" data-price="16,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D1.jpg" alt="Gyu Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Gyu Don</span>
+      
+    </div>
+    <span class="tile-price">€16,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D2" data-name="Sauce Katsu Don" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D2.jpg" alt="Sauce Katsu Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sauce Katsu Don</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D3" data-name="Mabo Tofu Don" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D3.jpg" alt="Mabo Tofu Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Mabo Tofu Don</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D4" data-name="Sake Saikyo Yaki Don" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D4.jpg" alt="Sake Saikyo Yaki Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sake Saikyo Yaki Don</span>
+      
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D5" data-name="Tori Don" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D5.jpg" alt="Tori Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tori Don</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D6" data-name="Cha Shiu Don" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D6.jpg" alt="Cha Shiu Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Cha Shiu Don</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D7" data-name="Unagi Don" data-price="25,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D7.jpg" alt="Unagi Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Unagi Don</span>
+      
+    </div>
+    <span class="tile-price">€25,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="donburi" data-code="D8" data-name="Yaki Nasu Don" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D8.jpg" alt="Yaki Nasu Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Yaki Nasu Don</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="japan-curry" data-category="japan-curry" data-code="JC1" data-name="Curry Rice" data-price="14,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/JC1.jpg" alt="Curry Rice" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Curry Rice</span>
+      
+    </div>
+    <span class="tile-price">€14,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japan-curry" data-code="JC2" data-name="Katsu Curry" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/JC2.jpg" alt="Katsu Curry" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Katsu Curry</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japan-curry" data-code="JC3" data-name="Chicken Katsu Curry" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/JC3.jpg" alt="Chicken Katsu Curry" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Chicken Katsu Curry</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japan-curry" data-code="JC4" data-name="Ebi Fry Curry" data-price="16,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/JC4.jpg" alt="Ebi Fry Curry" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ebi Fry Curry</span>
+      
+    </div>
+    <span class="tile-price">€16,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japan-curry" data-code="JC5" data-name="Katsu Curry Udon" data-price="16,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/JC5.jpg" alt="Katsu Curry Udon" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Katsu Curry Udon</span>
+      
+    </div>
+    <span class="tile-price">€16,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japan-curry" data-code="JC6" data-name="Curry Pan" data-price="4,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/JC6.jpg" alt="Curry Pan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Curry Pan</span>
+      
+    </div>
+    <span class="tile-price">€4,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="teishoku" data-category="teishoku" data-code="TS1" data-name="Tori Teriyaki Set" data-price="15,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/TS1.jpg" alt="Tori Teriyaki Set" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tori Teriyaki Set</span>
+      
+    </div>
+    <span class="tile-price">€15,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="teishoku" data-code="TS2" data-name="Tonkatsu Set" data-price="15,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/TS2.jpg" alt="Tonkatsu Set" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tonkatsu Set</span>
+      
+    </div>
+    <span class="tile-price">€15,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="teishoku" data-code="TS3" data-name="Sake Saikyo Yaki Set" data-price="17,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/TS3.jpg" alt="Sake Saikyo Yaki Set" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sake Saikyo Yaki Set</span>
+      
+    </div>
+    <span class="tile-price">€17,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="desserts" data-category="desserts" data-code="D9" data-name="Age Mochi" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D9.jpg" alt="Age Mochi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Age Mochi</span>
+      
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D10" data-name="Azuki Mochi" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D10.jpg" alt="Azuki Mochi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Azuki Mochi</span>
+      
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D11" data-name="Yaki Mochi" data-price="5,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D11.jpg" alt="Yaki Mochi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Yaki Mochi</span>
+      
+    </div>
+    <span class="tile-price">€5,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D12" data-name="Kinako Mochi" data-price="6,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D12.jpg" alt="Kinako Mochi" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kinako Mochi</span>
+      
+    </div>
+    <span class="tile-price">€6,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D13" data-name="Melon Pan" data-price="3,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D13.jpg" alt="Melon Pan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Melon Pan</span>
+      
+    </div>
+    <span class="tile-price">€3,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D14" data-name="Choco Pan" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D14.jpg" alt="Choco Pan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Choco Pan</span>
+      
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D15" data-name="Matcha/Sesame Cookies" data-price="2,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D15.jpg" alt="Matcha/Sesame Cookies" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Matcha/Sesame Cookies</span>
+      
+    </div>
+    <span class="tile-price">€2,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="desserts" data-code="D16" data-name="Kinako Mitarashi Dango" data-price="6,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/D16.jpg" alt="Kinako Mitarashi Dango" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Kinako Mitarashi Dango</span>
+      
+    </div>
+    <span class="tile-price">€6,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="japanese-snacks-from-our-sho-pan-sho" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S1" data-name="Onigirazu TUNA" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S1.jpg" alt="Onigirazu TUNA" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigirazu TUNA</span>
+      
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S2" data-name="Onigirazu EBI - AVOCADO" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S2.jpg" alt="Onigirazu EBI - AVOCADO" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigirazu EBI - AVOCADO</span>
+      
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S3" data-name="Futomaki" data-price="7,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S3.jpg" alt="Futomaki" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Futomaki</span>
+      
+    </div>
+    <span class="tile-price">€7,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S4" data-name="Onigiri Yukari" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S4.jpg" alt="Onigiri Yukari" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigiri Yukari</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S5" data-name="Onigiri Avocado" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S5.jpg" alt="Onigiri Avocado" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigiri Avocado</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S6" data-name="Onigiri Gemüse" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S6.jpg" alt="Onigiri Gemüse" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigiri Gemüse</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S7" data-name="Onigiri Cha Shiu" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S7.jpg" alt="Onigiri Cha Shiu" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigiri Cha Shiu</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S8" data-name="Onigiri Tuna" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S8.jpg" alt="Onigiri Tuna" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigiri Tuna</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S9" data-name="Onigiri Lachs" data-price="4,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S9.jpg" alt="Onigiri Lachs" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigiri Lachs</span>
+      
+    </div>
+    <span class="tile-price">€4,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S10" data-name="Melon Pan" data-price="3,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S10.jpg" alt="Melon Pan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Melon Pan</span>
+      
+    </div>
+    <span class="tile-price">€3,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S11" data-name="Choco Pan" data-price="4,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S11.jpg" alt="Choco Pan" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Choco Pan</span>
+      
+    </div>
+    <span class="tile-price">€4,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S12" data-name="Karamucho" data-price="3,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S12.jpg" alt="Karamucho" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Karamucho</span>
+      
+    </div>
+    <span class="tile-price">€3,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S13" data-name="Sweet &amp; Sour Pickled Plum Chips" data-price="3,5" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S13.jpg" alt="Sweet &amp; Sour Pickled Plum Chips" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Sweet &amp; Sour Pickled Plum Chips</span>
+      
+    </div>
+    <span class="tile-price">€3,5</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S14" data-name="Crispy Ramen Snack" data-price="2,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S14.jpg" alt="Crispy Ramen Snack" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Crispy Ramen Snack</span>
+      
+    </div>
+    <span class="tile-price">€2,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S15" data-name="Rice Cracker" data-price="2" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S15.jpg" alt="Rice Cracker" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Rice Cracker</span>
+      
+    </div>
+    <span class="tile-price">€2</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="japanese-snacks-from-our-sho-pan-sho" data-code="S16" data-name="Peanut Cracker" data-price="2,50" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/S16.jpg" alt="Peanut Cracker" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Peanut Cracker</span>
+      
+    </div>
+    <span class="tile-price">€2,50</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="weekly-special" data-category="weekly-special" data-code="WS1" data-name="Oyako Don" data-price="14,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/WS1.jpg" alt="Oyako Don" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Oyako Don</span>
+      
+    </div>
+    <span class="tile-price">€14,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category-start="lunch-menu" data-category="lunch-menu" data-code="L1" data-name="Ramen Lunch Set" data-price="12,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/L1.jpg" alt="Ramen Lunch Set" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Ramen Lunch Set</span>
+      
+    </div>
+    <span class="tile-price">€12,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="lunch-menu" data-code="L2" data-name="Onigirazu Set" data-price="10,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/L2.jpg" alt="Onigirazu Set" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Onigirazu Set</span>
+      
+    </div>
+    <span class="tile-price">€10,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="lunch-menu" data-code="L3" data-name="Futomaki Set" data-price="10,90" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/L3.jpg" alt="Futomaki Set" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Futomaki Set</span>
+      
+    </div>
+    <span class="tile-price">€10,90</span>
+  </div>
+</div>
+<div class="menu-tile" data-category="lunch-menu" data-code="L4" data-name="Tofu Teriyaki Don Lunch" data-price="12,9" onclick="toggleSelect(this)">
+  <div class="tile-image"><img src="./images/shoyu/L4.jpg" alt="Tofu Teriyaki Don Lunch" loading="lazy"></div>
+  <div class="tile-check"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#22c55e" stroke="#fff" stroke-width="1.5"/><path d="M7 12.5l3 3 7-7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="tile-caption">
+    <div class="tile-name-wrap">
+      <span class="tile-name">Tofu Teriyaki Don Lunch</span>
+      
+    </div>
+    <span class="tile-price">€12,9</span>
+  </div>
+</div>
+</div>
+
+<div class="container">
+<div id="drinks-anchor"></div>
+<div class="menu-section drink-section">
+  <div class="section-header">
+    <h2 class="section-title">Getränke</h2>
+  </div>
+  <div class="drink-list">
+    <div class="drink-row" data-code="G1" data-name="Coca Cola" data-price="3,15" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca Cola</span>
+      <span class="drink-price">€3,15</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G2" data-name="Coca Cola Zero" data-price="3,15" onclick="toggleSelect(this)">
+      <span class="drink-name">Coca Cola Zero</span>
+      <span class="drink-price">€3,15</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G3" data-name="Mineralwasser" data-price="1,90" onclick="toggleSelect(this)">
+      <span class="drink-name">Mineralwasser</span>
+      <span class="drink-price">€1,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G4" data-name="Ramune" data-price="3,80" onclick="toggleSelect(this)">
+      <span class="drink-name">Ramune</span>
+      <span class="drink-detail">japanische Limonade</span>
+      <span class="drink-price">€3,80</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G5" data-name="SHOYU Minze Limonade" data-price="5,90" onclick="toggleSelect(this)">
+      <span class="drink-name">SHOYU Minze Limonade</span>
+      <span class="drink-detail">Prickelnde Minze Limonade mit Zitrone (0,5L)</span>
+      <span class="drink-price">€5,90</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G6" data-name="SHOYU Yuzu Limonade" data-price="6,30" onclick="toggleSelect(this)">
+      <span class="drink-name">SHOYU Yuzu Limonade</span>
+      <span class="drink-detail">Prickelnde Limonade mit Yuzu und Honig (0,5L)</span>
+      <span class="drink-price">€6,30</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G7" data-name="Jasmin Eistee" data-price="6,30" onclick="toggleSelect(this)">
+      <span class="drink-name">Jasmin Eistee</span>
+      <span class="drink-detail">hausgemachter Jasmin Eistee mit Holunder</span>
+      <span class="drink-price">€6,30</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G8" data-name="Sake Girl" data-price="13" onclick="toggleSelect(this)">
+      <span class="drink-name">Sake Girl</span>
+      <span class="drink-detail">Sake, 330ml</span>
+      <span class="drink-price">€13</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G9" data-name="Sake Miwatari Junmai Ginjo" data-price="25" onclick="toggleSelect(this)">
+      <span class="drink-name">Sake Miwatari Junmai Ginjo</span>
+      <span class="drink-detail">300ml</span>
+      <span class="drink-price">€25</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G10" data-name="Pokka Ice Tea Peach" data-price="2,80" onclick="toggleSelect(this)">
+      <span class="drink-name">Pokka Ice Tea Peach</span>
+      <span class="drink-price">€2,80</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+    <div class="drink-row" data-code="G11" data-name="Pokka Ice Tea Mango" data-price="2,80" onclick="toggleSelect(this)">
+      <span class="drink-name">Pokka Ice Tea Mango</span>
+      <span class="drink-price">€2,80</span>
+      <span class="drink-check"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#22c55e" stroke="#fff" stroke-width="1"/><path d="M6 10.5l2.5 2.5 5.5-5.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<div id="tab-selection" class="tab-content">
+  <div class="receipt" id="receipt">
+    <div class="receipt-header">
+      <h3>SHOYU</h3>
+      <p>Japanese Kitchen · Vienna</p>
+      <p>Your Selection</p>
+    </div>
+    <div id="receipt-body">
+      <p class="receipt-empty">Tap items on the menu to add them here</p>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div>&copy; Shoyu</div>
+</footer>
+
+<script>
+// ---- Tab switching ----
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    const catNav = document.querySelector('.cat-nav');
+    if (catNav) catNav.style.display = btn.dataset.tab === 'menu' ? 'flex' : 'none';
+    window.scrollTo(0, 0);
+  });
+});
+
+// ---- Category pill navigation ----
+document.querySelectorAll('.cat-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+    pill.classList.add('cat-pill--active');
+    const cat = pill.dataset.cat;
+    if (cat === 'all') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (cat === 'drinks') {
+      const anchor = document.getElementById('drinks-anchor');
+      if (anchor) {
+        const hdrH = document.querySelector('.site-header').offsetHeight;
+        const y = anchor.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      return;
+    }
+    const sentinel = document.querySelector('#tab-menu [data-category-start="' + cat + '"]');
+    if (sentinel) {
+      const hdrH = document.querySelector('.site-header').offsetHeight;
+      const y = sentinel.getBoundingClientRect().top + window.scrollY - hdrH - 4;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+});
+
+// ---- Auto-highlight pill on scroll ----
+const catNav = document.querySelector('.cat-nav');
+if (catNav) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const cat = entry.target.getAttribute('data-category-start');
+        if (cat) {
+          document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('cat-pill--active'));
+          const pill = document.querySelector('.cat-pill[data-cat="' + cat + '"]');
+          if (pill) {
+            pill.classList.add('cat-pill--active');
+            pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    });
+  }, { rootMargin: '-' + catNav.offsetHeight + 'px 0px -80% 0px', threshold: 0 });
+  document.querySelectorAll('[data-category-start]').forEach(el => observer.observe(el));
+}
+
+// ---- Config ----
+const CURRENCY = '€';
+
+// ---- HTML escaping for safe innerHTML ----
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(s));
+  return d.innerHTML;
+}
+
+// ---- Selection / Receipt system ----
+const selected = new Map();
+
+function toggleSelect(el) {
+  const code = el.dataset.code;
+  const name = el.dataset.name;
+  const price = el.dataset.price;
+  const chEl = el.querySelector('.tile-chinese');
+  const chinese = chEl ? chEl.textContent : '';
+
+  if (selected.has(code)) {
+    selected.delete(code);
+    el.classList.remove('selected');
+  } else {
+    selected.set(code, { name, price, chinese, qty: 1 });
+    el.classList.add('selected');
+  }
+  updateReceipt();
+}
+
+function changeQty(code, delta) {
+  const item = selected.get(code);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) {
+    selected.delete(code);
+    document.querySelectorAll('[data-code="' + code + '"]').forEach(el => el.classList.remove('selected'));
+  }
+  updateReceipt();
+}
+
+function clearAll() {
+  selected.clear();
+  document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+  updateReceipt();
+}
+
+function parsePrice(p) {
+  const matches = p.match(/(\d+[,.]\d+)/g);
+  if (matches) return parseFloat(matches[matches.length - 1].replace(',', '.'));
+  return 0;
+}
+
+function updateReceipt() {
+  const badge = document.getElementById('sel-badge');
+  const body = document.getElementById('receipt-body');
+  let totalItems = 0;
+  selected.forEach(item => totalItems += item.qty);
+
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  if (selected.size === 0) {
+    body.innerHTML = '<p class="receipt-empty">Tap items on the menu to add them here</p>';
+    return;
+  }
+
+  let total = 0;
+  let html = '<ul class="receipt-items">';
+  selected.forEach((item, code) => {
+    const unitPrice = parsePrice(item.price);
+    const lineTotal = unitPrice * item.qty;
+    total += lineTotal;
+    const chineseSpan = item.chinese ? '<span class="receipt-item-chinese">' + escapeHtml(item.chinese) + '</span>' : '';
+    html += '<li class="receipt-item">';
+    html += '<div class="receipt-item-left">';
+    html += '<span class="receipt-item-name">' + escapeHtml(item.name) + '</span>';
+    if (chineseSpan) html += chineseSpan;
+    html += '</div>';
+    html += '<div class="receipt-item-right">';
+    html += '<div class="qty-controls">';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code + '\',-1)">−</button>';
+    html += '<span class="qty-num">' + item.qty + '</span>';
+    html += '<button class="qty-btn" onclick="event.stopPropagation();changeQty(\'' + code + '\',1)">+</button>';
+    html += '</div>';
+    html += '<span class="receipt-item-price">' + CURRENCY + lineTotal.toFixed(2).replace('.', ',') + '</span>';
+    html += '</div>';
+    html += '</li>';
+  });
+  html += '</ul>';
+  html += '<div class="receipt-total">';
+  html += '<span class="receipt-total-label">TOTAL</span>';
+  html += '<span class="receipt-total-amount">' + CURRENCY + total.toFixed(2).replace('.', ',') + '</span>';
+  html += '</div>';
+  html += '<p class="receipt-count">' + totalItems + ' item' + (totalItems !== 1 ? 's' : '') + '</p>';
+  html += '<button class="clear-btn" onclick="clearAll()">Clear All</button>';
+
+  body.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
